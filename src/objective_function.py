@@ -146,3 +146,42 @@ def isFragileBelow(state, truck_index):
                 return True
 
     return False
+
+def calculateCapacityPenalty(state):
+    penalty = 0
+
+    for truck in state["in_trucks"]["packages"]:
+        weight = calculateTruckWeight(truck)
+
+        current_id = truck["id"]
+
+        if weight > trucks[current_id]["max_capacity"]:
+            excess = max(0, weight - trucks[current_id]["max_capacity"])
+            penalty += excess * 100
+
+    return penalty
+
+def calculateWarehousePenalty(state):
+    weight = 0
+
+    for warehouse in state["warehouse"]:
+        weight += packages[warehouse]["weight"]
+
+    return weight*20
+
+def calculateCost(state): #nanti dituning ya gessss @fira @vari
+    cost = 0
+    
+    cost += calculateCapacityPenalty(state)
+    cost += calculateWarehousePenalty(state)
+
+    if isFragileBelow(state):
+        cost += 10000
+
+    if isPackageClipping(state):
+        cost += 10000
+
+    if isPackageFlying(state):
+        cost += 10000
+
+

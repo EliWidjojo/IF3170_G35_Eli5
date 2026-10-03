@@ -4,7 +4,7 @@ import random
 
 # bentuk state:
 # state = {
-#   "in_warehouse": []
+#   "in_warehouse": [packages]
 #   "in_trucks": [
 #       "truck": id_truck
 #       "packages": [
@@ -57,3 +57,5 @@ def generateRandomState():
             state["in_warehouse"].append(package["id"])
 
     return state
+
+
