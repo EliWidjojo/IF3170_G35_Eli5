@@ -1,0 +1,21 @@
+[
+    {
+        "id": "RusdiPackage",
+        "dimension" : 
+        {
+            "w":10, 
+            "l":20, 
+            "h":5
+        },
+        "orientation":
+        {
+            "w":"x", 
+            "l":"y", 
+            "h":"z"
+        }, 
+        "value": 60,
+        "weight": 5,
+        "isFragile": false,
+        "eta": 3       
+    }
+]

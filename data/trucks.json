@@ -1,0 +1,12 @@
+[
+    {
+        "id": "truck01",
+        "dimension" : 
+        {
+            "w":10, 
+            "l":20, 
+            "h":5
+        },
+        "max_capacity" : 500
+    }
+]
