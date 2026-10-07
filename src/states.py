@@ -98,19 +98,13 @@ def tryPlacePackage(state, truck_index, package):
             pos_y = random.randint(0, truck_data["dimension"]["l"] - dim["y"])
             pos_z = random.randint(0, truck_data["dimension"]["h"] - dim["z"])
     
-            package_candidate = {
+            state["in_trucks"][truck_index]["packages"].append({
                 "id": package["id"],
                 "position": {"x": pos_x, "y": pos_y, "z": pos_z},
                 "orientation": orientation
-            }
+            })
         
-            state["in_trucks"][truck_index]["packages"].append(package_candidate)
-
-            # cek constraints
-            if (not isPackageClipping(state, truck_index) and not isPackageFlying(state, truck_index) and not isFragileBelow(state, truck_index)):
-                return True
-            else:
-                state["in_trucks"][truck_index]["packages"].pop()
+            return True
                 
     return False
 
@@ -139,16 +133,16 @@ def chooseRandomSourceTruck(state):
 
 # nyari truk yang masih muat utk paket tertentu
 def getTrucksWithCapacity(state, package, exclude_index=None):
-    trucks_with_capacity = []
+    possible_trucks = []
     
     for i, truck in enumerate(state["in_trucks"]):
         if i == exclude_index:
             continue
         
         if calculateTruckWeight(state, i) + package["weight"] <= trucks[i]["max_capacity"]:
-            trucks_with_capacity.append(i)
+            possible_trucks.append(i)
     
-    return trucks_with_capacity
+    return possible_trucks
 
 # pilih 1 paket dr truk a trs pindahin ke truk b
 def movePackageBetweenTrucks(state):
@@ -181,35 +175,35 @@ def swapPackageBetweenTrucks(state):
         return False
 
     package_a = random.choice(state["in_trucks"][truck_a]["packages"])
-    weight_a = calculateTruckWeight(state, truck_a)
-    weight_package_a = getPackageById(package_a["id"])["weight"]
+    w_a = calculateTruckWeight(state, truck_a)
+    w_pkg_a = getPackageById(package_a["id"])["weight"]
 
-    package_b_candidates = []
+    pkg_b_candidates = []
 
     for truck_b_index, truck_b in enumerate(state["in_trucks"]):
         if truck_b_index == truck_a or len(truck_b["packages"]) == 0:
             continue
 
-        weight_b = calculateTruckWeight(state, truck_b_index)
-        valid_packages_b = []
+        w_b = calculateTruckWeight(state, truck_b_index)
+        valid_pkg_b = []
 
         for package_b in truck_b["packages"]:
-            weight_package_b = getPackageById(package_b["id"])["weight"]
-            weight_a_new = weight_a - weight_package_a + weight_package_b
-            weight_b_new = weight_b - weight_package_b + weight_package_a
+            w_pkg_b = getPackageById(package_b["id"])["weight"]
+            w_a_new = w_a - w_pkg_a + w_pkg_b
+            w_b_new = w_b - w_pkg_b + w_pkg_a
 
             # cek apakah masih muat
-            if (weight_a_new <= trucks[truck_a]["max_capacity"] and weight_b_new <= trucks[truck_b_index]["max_capacity"]):
-                valid_packages_b.append(package_b)
+            if (w_a_new <= trucks[truck_a]["max_capacity"] and w_b_new <= trucks[truck_b_index]["max_capacity"]):
+                valid_pkg_b.append(package_b)
 
-        if valid_packages_b:
-            package_b = random.choice(valid_packages_b)
-            package_b_candidates.append((truck_b_index, package_b))
+        if valid_pkg_b:
+            package_b = random.choice(valid_pkg_b)
+            pkg_b_candidates.append((truck_b_index, package_b))
 
-    if not package_b_candidates:
+    if not pkg_b_candidates:
         return False
 
-    truck_b_index, package_b = random.choice(package_b_candidates)
+    truck_b_index, package_b = random.choice(pkg_b_candidates)
 
     # coba swap paket
     removePackageFromTruck(state, truck_a, package_a["id"])
@@ -292,9 +286,7 @@ def changePosition(state):
             continue
 
         package["position"] = new_pos
-
-        if (not isPackageClipping(state, truck_index) and not isPackageFlying(state, truck_index) and not isFragileBelow(state, truck_index)):
-            return True
+        return True
 
     # kalo gagal kembaliin ke posisi sebelumnya
     package["position"] = old_pos
@@ -319,7 +311,7 @@ def changeOrientation(state):
     random.shuffle(orientations)
 
     for new_orientation in orientations:
-        # skip orientasi yang sama dengan sekarang
+        # skip orientasi yang sama dgn sekarang
         if new_orientation == old_orientation:
             continue
 
@@ -333,9 +325,7 @@ def changeOrientation(state):
             continue
 
         package["orientation"] = new_orientation
-
-        if (not isPackageClipping(state, truck_index) and not isPackageFlying(state, truck_index) and not isFragileBelow(state, truck_index)):
-            return True
+        return True
 
     # kalo gagal balikin ke orientasi sebelumnya
     package["orientation"] = old_orientation
