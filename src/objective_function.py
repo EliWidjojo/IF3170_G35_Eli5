@@ -19,133 +19,151 @@ def calculateTruckValue(state, truck_index):
 
     return total_weight
 
-def isPackageFlying(state, truck_index):
+def getFlyingPackages(state, truck_index):
     truck_packages = state["in_trucks"][truck_index]["packages"]
+    flying = []
 
-    for state_package in truck_packages:
-        package = getPackageById(state_package["id"])
-        position = state_package["position"]
-        dimension = getDimensionXYZ(package)
+    for sp in truck_packages:
+        pkg = getPackageById(sp["id"])
+        pos = sp["position"]
+        dim = getDimensionXYZ({
+            "dimension": pkg["dimension"],
+            "orientation": sp["orientation"]
+        })
 
-        if position["z"] == 0:
+        if pos["z"] == 0:
             continue
 
         is_supported = False
 
-        for other_state_package in truck_packages:
-            if other_state_package["id"] == state_package["id"]:
+        for osp in truck_packages:
+            if osp["id"] == sp["id"]:
                 continue
 
-            other_package = getPackageById(other_state_package["id"])
-            other_position = other_state_package["position"]
-            other_dimension = getDimensionXYZ(other_package)
+            opkg = getPackageById(osp["id"])
+            opos = osp["position"]
+            odim = getDimensionXYZ({
+                "dimension": opkg["dimension"],
+                "orientation": osp["orientation"]
+            })
 
-            other_top = other_position["z"] + other_dimension["z"]
-
-            if other_top != position["z"]:
+            other_top = opos["z"] + odim["z"]
+            if other_top != pos["z"]:
                 continue
 
-            x_overlap = (
-                position["x"] < other_position["x"] + other_dimension["x"]
-                and
-                position["x"] + dimension["x"] > other_position["x"]                
-            )
-
-            y_overlap = (
-                position["y"] < other_position["y"] + other_dimension["y"]
-                and
-                position["y"] + dimension["y"] > other_position["y"]                
-            )
+            x_overlap = (pos["x"] < opos["x"] + odim["x"] and pos["x"] + dim["x"] > opos["x"])
+            y_overlap = (pos["y"] < opos["y"] + odim["y"] and pos["y"] + dim["y"] > opos["y"])
 
             if x_overlap and y_overlap:
                 is_supported = True
                 break
 
         if not is_supported:
-            return True
+            flying.append(sp["id"])
 
-    return False
+    return flying
 
-def isPackageClipping(state, truck_index):
+def isPackageFlying(state, truck_index):
+    return len(getFlyingPackages(state, truck_index)) > 0
+      
+def getClippingPairs(state, truck_index):
     truck_packages = state["in_trucks"][truck_index]["packages"]
+    pairs = []
 
     for i in range(len(truck_packages)):
-        package1_state = truck_packages[i]
-        package1 = getPackageById(package1_state["id"])
-        pos1 = package1_state["position"]
-        dim1 = getDimensionXYZ(package1)
+        p1s = truck_packages[i]
+        p1 = getPackageById(p1s["id"])
+        pos1 = p1s["position"]
+        dim1 = getDimensionXYZ({
+            "dimension": p1["dimension"],
+            "orientation": p1s["orientation"]
+        })
 
         for j in range(i + 1, len(truck_packages)):
-            package2_state = truck_packages[j]
-            package2 = getPackageById(package2_state["id"])
-            pos2 = package2_state["position"]
-            dim2 = getDimensionXYZ(package2)
+            p2s = truck_packages[j]
+            p2 = getPackageById(p2s["id"])
+            pos2 = p2s["position"]
+            dim2 = getDimensionXYZ({
+                "dimension": p2["dimension"],
+                "orientation": p2s["orientation"]
+            })
 
-            x_overlap = (
-                pos1["x"] < pos2["x"] + dim2["x"]
-                and
-                pos1["x"] + dim1["x"] > pos2["x"]                
-            )
-
-            y_overlap = (
-                pos1["y"] < pos2["y"] + dim2["y"]
-                and
-                pos1["y"] + dim1["y"] > pos2["y"]                
-            )
-
-            z_overlap = (
-                pos1["z"] < pos2["z"] + dim2["z"]
-                and
-                pos1["z"] + dim1["z"] > pos2["z"]                
-            )
+            x_overlap = (pos1["x"] < pos2["x"] + dim2["x"] and pos1["x"] + dim1["x"] > pos2["x"])
+            y_overlap = (pos1["y"] < pos2["y"] + dim2["y"] and pos1["y"] + dim1["y"] > pos2["y"])
+            z_overlap = (pos1["z"] < pos2["z"] + dim2["z"] and pos1["z"] + dim1["z"] > pos2["z"])
 
             if x_overlap and y_overlap and z_overlap:
-                return True
+                pairs.append((p1s["id"], p2s["id"]))
 
-    return False
+    return pairs
 
-def isFragileBelow(state, truck_index):
+def isPackageClipping(state, truck_index):
+    return len(getClippingPairs(state, truck_index)) > 0
+
+def getFragileViolations(state, truck_index):
     truck_packages = state["in_trucks"][truck_index]["packages"]
+    violations = []
 
-    for state_package in truck_packages:
-        package = getPackageById(state_package["id"])
-        position = state_package["position"]
-        dimension = getDimensionXYZ(package)
+    for sp in truck_packages:
+        pkg = getPackageById(sp["id"])
+        pos = sp["position"]
+        dim = getDimensionXYZ({
+            "dimension": pkg["dimension"],
+            "orientation": sp["orientation"]
+        })
 
-        for other_state_package in truck_packages:
-            if other_state_package["id"] == state_package["id"]:
+        for osp in truck_packages:
+            if osp["id"] == sp["id"]:
                 continue
 
-            other_package = getPackageById(other_state_package["id"])
-            if not other_package["isFragile"]:
+            opkg = getPackageById(osp["id"])
+            if not opkg["isFragile"]:
                 continue
 
-            other_position = other_state_package["position"]
-            other_dimension = getDimensionXYZ(other_package)
+            opos = osp["position"]
+            odim = getDimensionXYZ({
+                "dimension": opkg["dimension"],
+                "orientation": osp["orientation"]
+            })
 
-            other_top = other_position["z"] + other_dimension["z"]
-
-            current_bottom = position["z"]
-
-            if other_top != current_bottom:
+            other_top = opos["z"] + odim["z"]
+            if other_top != pos["z"]:
                 continue
 
-            x_overlap = (
-                position["x"] < other_position["x"] + other_dimension["x"]
-                and
-                position["x"] + dimension["x"] > other_position["x"]                
-            )
-
-            y_overlap = (
-                position["y"] < other_position["y"] + other_dimension["y"]
-                and
-                position["y"] + dimension["y"] > other_position["y"]                
-            )
+            x_overlap = (pos["x"] < opos["x"] + odim["x"] and pos["x"] + dim["x"] > opos["x"])
+            y_overlap = (pos["y"] < opos["y"] + odim["y"] and pos["y"] + dim["y"] > opos["y"])
 
             if x_overlap and y_overlap:
-                return True
+                violations.append((sp["id"], osp["id"]))
 
-    return False
+    return violations
+
+def isFragileBelow(state, truck_index):
+    return len(getFragileViolations(state, truck_index)) > 0
+
+def getOutOfBoundsPackages(state, truck_index):
+    truck_data = trucks[truck_index]
+    truck_packages = state["in_trucks"][truck_index]["packages"]
+    out = []
+
+    for sp in truck_packages:
+        pkg = getPackageById(sp["id"])
+        dim = getDimensionXYZ({
+            "dimension": pkg["dimension"],
+            "orientation": sp["orientation"]
+        })
+        pos = sp["position"]
+
+        if (pos["x"] < 0 or pos["y"] < 0 or pos["z"] < 0 or
+            pos["x"] + dim["x"] > truck_data["dimension"]["w"] or
+            pos["y"] + dim["y"] > truck_data["dimension"]["l"] or
+            pos["z"] + dim["z"] > truck_data["dimension"]["h"]):
+            out.append(sp["id"])
+
+    return out
+
+def isPackageOutOfBounds(state, truck_index):
+    return len(getOutOfBoundsPackages(state, truck_index)) > 0
 
 def calculateCapacityPenalty(state):
     penalty = 0
@@ -187,7 +205,7 @@ def calculateTotVal(state):
 
     return total_value
 
-def calculateCost(state): #nanti dituning ya gessss @fira @vari
+def calculateCost(state):
     cost = 0
 
     cost -= calculateTotVal(state)
@@ -195,13 +213,8 @@ def calculateCost(state): #nanti dituning ya gessss @fira @vari
     cost += calculateWarehousePenalty(state)
 
     for truck_index in range(len(state["in_trucks"])):
-        if isFragileBelow(state, truck_index):
-            cost += 10000
-
-        if isPackageClipping(state, truck_index):
-            cost += 10000
-
-        if isPackageFlying(state, truck_index):
-            cost += 10000
+        cost += ((len(getClippingPairs(state, truck_index)) + len(getFlyingPackages(state, truck_index)) + 
+                 len(getFragileViolations(state, truck_index)) + len(getOutOfBoundsPackages(state, truck_index))) 
+                 * 10000)
 
     return cost
