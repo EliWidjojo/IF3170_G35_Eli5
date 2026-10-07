@@ -45,12 +45,38 @@ def violations(state, truck_index):
         found.append("melayang")
     if isFragileBelow(state, truck_index):
         found.append("fragile di bawah")
+    if isPackageOutOfBounds(state, truck_index):
+        found.append("keluar dari truk")
     return found
+
+def packageViolations(state, truck_index):
+    info = {}
+
+    for a, b in getClippingPairs(state, truck_index):
+        info.setdefault(a, []).append(f"clipping dgn {b}")
+        info.setdefault(b, []).append(f"clipping dgn {a}")
+
+    for pid in getFlyingPackages(state, truck_index):
+        info.setdefault(pid, []).append("melayang")
+
+    for pid, fid in getFragileViolations(state, truck_index):
+        info.setdefault(pid, []).append(f"di atas fragile {fid}")
+
+    for pid in getOutOfBoundsPackages(state, truck_index):
+        info.setdefault(pid, []).append("keluar dari truk")
+
+    return info
  
 #mapping warna per id paket biar init dan finalnya mudah dibandingin
 def colorMap(state):
     ids = sorted([p["id"] for t in state["in_trucks"] for p in t["packages"]] + list(state["in_warehouse"]))
     return {pid: PALETTE[i % len(PALETTE)] for i, pid in enumerate(ids)}
+
+#garis putus2 ke sumbu xyz
+def drawProjectionLines(ax, x, y, z, color="#888888"):
+    ax.plot([0, x], [y, y], [z, z], color=color, linewidth=0.4, linestyle="--", alpha=0.5)
+    ax.plot([x, x], [0, y], [z, z], color=color, linewidth=0.4, linestyle="--", alpha=0.5)
+    ax.plot([x, x], [y, y], [0, z], color=color, linewidth=0.4, linestyle="--", alpha=0.5)
 
 #3d crates
 def drawTruckkun(ax, truck_index, state, colors, labels=False):
@@ -75,8 +101,22 @@ def drawTruckkun(ax, truck_index, state, colors, labels=False):
                 linewidths=1.0 if fragile else 0.5, alpha=0.85,
             )
         )
+        drawProjectionLines(ax, pos["x"], pos["y"], pos["z"])
         if labels and len(placed) <= MAX_LABELS:
             ax.text(pos["x"] + dim["x"] / 2, pos["y"] + dim["y"] / 2, pos["z"] + dim["z"], sp["id"], fontsize=6, ha="center", va="bottom")
+
+    # grid lantai
+    for gx in range(0, W + 1, 2):
+        ax.plot([gx, gx], [0, L], [0, 0], color="#dddddd", linewidth=0.3, alpha=0.35)
+    for gy in range(0, L + 1, 5):
+        ax.plot([0, W], [gy, gy], [0, 0], color="#dddddd", linewidth=0.3, alpha=0.35)
+
+    # grid dinding belakang
+    for gx in range(0, W + 1, 2):
+        ax.plot([gx, gx], [L, L], [0, H], color="#dddddd", linewidth=0.3, alpha=0.35)
+    for gz in range(0, H + 1, 1):
+        ax.plot([0, W], [L, L], [gz, gz], color="#dddddd", linewidth=0.3, alpha=0.35)
+
     ax.set_xlim(0, W)
     ax.set_ylim(0, L)
     ax.set_zlim(0, H)
@@ -107,8 +147,9 @@ def infoState(state):
  
     lines.append("")
     lines.append("DI DALAM PETI KEMAS (id: x,y,z | w x l x h [orientasi])")
-    inside = []
-    for t in state["in_trucks"]:
+    for ti, t in enumerate(state["in_trucks"]):
+        bad = packageViolations(state, ti)
+        lines.append(f"  --- {t['truck']} ({len(t['packages'])} paket) ---")
         for sp in t["packages"]:
             pkg = getPackageById(sp["id"])
             d = getDimensionXYZ({
@@ -118,11 +159,13 @@ def infoState(state):
             p = sp["position"]
             o = sp["orientation"]
             tag = " *fragile" if pkg["isFragile"] else ""
-            inside.append(
-                f"{sp['id']}: {p['x']},{p['y']},{p['z']} | {d['x']}x{d['y']}x{d['z']} "
-                f"[{o['w']}{o['l']}{o['h']}] v={pkg['value']}{tag}"
+            mark = ""
+            if sp["id"] in bad:
+                mark = "  <-- " + ", ".join(bad[sp["id"]])
+            lines.append(
+                f"    {sp['id']}: {p['x']},{p['y']},{p['z']} | {d['x']}x{d['y']}x{d['z']} "
+                f"[{o['w']}{o['l']}{o['h']}] v={pkg['value']}{tag}{mark}"
             )
-    lines += inside if inside else ["(kosong)"]
     lines.append("")
     lines.append(f"DI LUAR / GUDANG ({len(state['in_warehouse'])} paket)")
     outside = []
@@ -164,7 +207,7 @@ def plotSA(results, save_path=None, show=True):
 
     for i, r in enumerate(results):
         ax_obj.plot(
-            r["objectiveHistory"],
+            r["costHistory"],
             linewidth=1,
             label=f"Run {i + 1}"
         )
@@ -203,7 +246,7 @@ def plotSA(results, save_path=None, show=True):
         rows.append([
             f"Run {i + 1}",
             r.get("seed", "-"),
-            r.get("iterations", len(r["objectiveHistory"]) - 1),
+            r.get("iterations", len(r["costHistory"]) - 1),
             r["finalVal"],
             f"{r['duration']:.1f}",
             r.get("stuckCtr", "-"),
