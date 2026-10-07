@@ -61,10 +61,9 @@ def geneticAlgorithm():
     for i in range(100):
         population.append(generateRandomState())
 
-    print("=== INITIAL STATE ===")
     best = min(population, key=lambda x: calculateCost(x))
     bestCost = calculateCost(best)
-    print("Best Cost       :\n", bestCost)
+    initState = deepCopyState(best)
 
     for generation in range(100):
         newPopulation = []
@@ -84,10 +83,7 @@ def geneticAlgorithm():
 
         costHistory.append(bestCost)
 
-        print("Generation:", generation+1, "| Cost:", bestCost)
-        print()
-
     best = min(population, key = lambda x : calculateCost(x))
     bestCost = calculateCost(best)
 
-    return best, bestCost, costHistory
+    return best, bestCost, costHistory, initState

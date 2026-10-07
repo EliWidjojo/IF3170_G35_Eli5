@@ -8,6 +8,7 @@ def simulatedAnnealing():
     T = 300
     cooldownRate = 0.999
     curState = generateRandomState()
+    initState = deepCopyState(curState)
     costHistory = [calculateCost(curState)]
     probabilityHistory = []
     stuckCtr = 0
@@ -41,4 +42,4 @@ def simulatedAnnealing():
         costHistory.append(calculateCost(curState))
         T *= cooldownRate
 
-    return curState, calculateCost(curState), costHistory
+    return curState, calculateCost(curState), costHistory, initState

@@ -1,11 +1,31 @@
 [
     {
-        "id": "truck01",
+        "id": "truckManhattanCafe",
         "dimension" : 
         {
             "w":10, 
             "l":20, 
             "h":5
+        },
+        "max_capacity" : 500
+    },
+    {
+        "id": "truckHishiAkebono",
+        "dimension" : 
+        {
+            "w":15, 
+            "l":40, 
+            "h":10
+        },
+        "max_capacity" : 500
+    },
+    {
+        "id": "truckNishinoFlower",
+        "dimension" : 
+        {
+            "w":8, 
+            "l":8, 
+            "h":8
         },
         "max_capacity" : 500
     }

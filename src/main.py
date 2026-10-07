@@ -1,6 +1,7 @@
 import os, glob, json, random
 from read_write_file import *
 from sim_anneal import *
+from hill_climbing import *
 import display
 
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")
@@ -8,7 +9,12 @@ RUNS = 3
 SHOW_WINDOWS = True #kalau false, gambarnya cuman disave jadi png, ga ditampilin
 
 ALGOS = { #file name, display name, func, ma func plot hasil
-    "1": ("SA", "Simulated Annealing", simulatedAnnealing, display.plotSA)
+    "1": ("HC-SA", "Hill Climbing Steepest Ascent", hillClimbing, display.plotSA),
+    "2": ("HC-SM", "Hill Climbing with Sideways Move", sideWaysHillClimbing, display.plotSA),
+    "3": ("HC-S", "Stochastic Hill Climbing", stochasticHillClimbing, display.plotSA),
+    "4": ("HC-RR", "Random Restart Hill Climbing", randomRestartHillClimbing, display.plotSA),
+    "5": ("SA", "Simulated Annealing", simulatedAnnealing, display.plotSA),
+    "6": ("GA", "Genetic Algorithm", simulatedAnnealing, display.plotSA)
     #tambahin yang lain yaw
 }
 
@@ -43,8 +49,18 @@ def runExperiment(name, label, algo):
         seed = random.randrange(1, 1000000)
         random.seed(seed)
         print(f"[{label}] run {run}/{RUNS} (seed={seed}) ...")
-        res = algo()
-        res["seed"] = seed
+        start_time = time.perf_counter()
+        finalState, finalCost, costHistory, initState = algo()
+        duration = time.perf_counter() - start_time
+        res = {
+            "initState": initState,
+            "finalState": finalState,
+            "finalCost": finalCost,
+            "finalVal": calculateTotVal(finalState),
+            "costHistory": costHistory,
+            "seed": seed,
+            "duration": duration
+        }
         saveRes(name, run, res)
         results.append(res)
         print(f"    value di truk = {res['finalVal']}"

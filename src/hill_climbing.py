@@ -4,6 +4,7 @@ from objective_function import *
 
 def hillClimbing():
     curState = generateRandomState()
+    initState = deepCopyState(curState)
     curCost = calculateCost(curState)
     costHistory = [curCost]
 
@@ -31,11 +32,12 @@ def hillClimbing():
         else:
             break
 
-    return curState, curCost, costHistory
+    return curState, curCost, costHistory, initState
 
 
 def sideWaysHillClimbing():
     curState = generateRandomState()
+    initState = deepCopyState(curState)
     curCost = calculateCost(curState)
     costHistory = [curCost]
     sideWaysMoves = 0
@@ -73,11 +75,12 @@ def sideWaysHillClimbing():
         else:
             break
 
-    return curState, curCost, costHistory
+    return curState, curCost, costHistory, initState
 
 
 def stochasticHillClimbing():
     curState = generateRandomState()
+    initState = deepCopyState(curState)
     curCost = calculateCost(curState)
     costHistory = [curCost]
 
@@ -93,7 +96,7 @@ def stochasticHillClimbing():
 
         costHistory.append(curCost)
 
-    return curState, curCost, costHistory
+    return curState, curCost, costHistory, initState
 
 
 def randomRestartHillClimbing():
@@ -102,11 +105,11 @@ def randomRestartHillClimbing():
     allCostHistory = []
 
     for i in range(10):
-        curState, curCost, costHistory = hillClimbing()
+        curState, curCost, costHistory, initState = hillClimbing()
         allCostHistory.extend(costHistory)
 
         if curCost < bestCost:
             bestState = curState
             bestCost = curCost
 
-    return bestState, bestCost, allCostHistory
+    return bestState, bestCost, allCostHistory, initState
