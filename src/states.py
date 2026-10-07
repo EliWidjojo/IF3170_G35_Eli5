@@ -361,4 +361,3 @@ def generateNeighborState(state, algorithm):
     success = operation(neighbor_state)
 
     return neighbor_state if success else state
-

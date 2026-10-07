@@ -169,6 +169,14 @@ def calculateWarehousePenalty(state):
 
     return weight*20
 
+def calculateTotVal(state):
+    total_value = 0
+
+    for truck_index in range(len(state["in_trucks"])):
+        total_value += calculateTruckValue(state, truck_index)
+
+    return total_value
+
 def calculateCost(state): #nanti dituning ya gessss @fira @vari
     cost = 0
     
@@ -183,5 +191,3 @@ def calculateCost(state): #nanti dituning ya gessss @fira @vari
 
     if isPackageFlying(state):
         cost += 10000
-
-

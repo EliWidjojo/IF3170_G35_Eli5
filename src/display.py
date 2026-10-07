@@ -1,0 +1,227 @@
+import os
+import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from read_write_file import trucks
+from helper_function import *
+from objective_function import *
+
+FRAGILE_COLOR = "#e63946"
+MAX_LABELS = 40
+PALETTE = ["#8ecae6", "#a8dadc", "#b7e4c7", "#d8f3dc", "#ffe8a3", "#ffd6a5", "#cdb4db", "#bde0fe", "#c7d3e0", "#e0e1a8", "#b8c0ff", "#9fd8cb"]
+
+#utils
+
+#optional save terus tampilin hasil
+def finish(fig, save_path, show):
+    if save_path:
+        folder = os.path.dirname(save_path)
+        if folder:
+            os.makedirs(folder, exist_ok=True)
+        fig.savefig(save_path, dpi=150, bbox_inches="tight")
+    if show:
+        plt.show()
+    else:
+        plt.close(fig)
+ 
+#muka-muka baloknya dengan sudut kiri-bawah-belakang di (x, y, z)
+def boxFaces(x, y, z, dx, dy, dz):
+    v = [(x, y, z), (x + dx, y, z), (x + dx, y + dy, z), (x, y + dy, z), (x, y, z + dz), (x + dx, y, z + dz), (x + dx, y + dy, z + dz), (x, y + dy, z + dz)]
+    return [
+        [v[0], v[1], v[2], v[3]],  
+        [v[4], v[5], v[6], v[7]],  
+        [v[0], v[1], v[5], v[4]],
+        [v[2], v[3], v[7], v[6]],
+        [v[1], v[2], v[6], v[5]],
+        [v[0], v[3], v[7], v[4]],
+    ]
+ 
+#jenis-jenis violations yg ketemu
+def violations(state, truck_index):
+    found = []
+    if isPackageClipping(state, truck_index):
+        found.append("clipping")
+    if isPackageFlying(state, truck_index):
+        found.append("melayang")
+    if isFragileBelow(state, truck_index):
+        found.append("fragile di bawah")
+    return found
+ 
+#mapping warna per id paket biar init dan finalnya mudah dibandingin
+def colorMap(state):
+    ids = sorted([p["id"] for t in state["in_trucks"] for p in t["packages"]] + list(state["in_warehouse"]))
+    return {pid: PALETTE[i % len(PALETTE)] for i, pid in enumerate(ids)}
+
+#3d crates
+def drawTruckkun(ax, truck_index, state, colors, labels=False):
+    truck_data = trucks[truck_index]
+    W, L, H = (truck_data["dimension"][k] for k in ("w", "l", "h"))
+    placed = state["in_trucks"][truck_index]["packages"]
+    #kerangka petinya
+    ax.add_collection3d(Poly3DCollection(boxFaces(0, 0, 0, W, L, H), facecolors=(0, 0, 0, 0), edgecolors="#555555", linewidths=1.2))
+    for sp in placed:
+        pkg = getPackageById(sp["id"])
+        dim = getDimensionXYZ({
+            "dimension": pkg["dimension"],
+            "orientation": sp["orientation"]
+        })
+        pos = sp["position"]
+        fragile = pkg["isFragile"]
+        ax.add_collection3d(
+            Poly3DCollection(
+                boxFaces(pos["x"], pos["y"], pos["z"], dim["x"], dim["y"], dim["z"]),
+                facecolors=FRAGILE_COLOR if fragile else colors[sp["id"]],
+                edgecolors="#7a0011" if fragile else "#333333",
+                linewidths=1.0 if fragile else 0.5, alpha=0.85,
+            )
+        )
+        if labels and len(placed) <= MAX_LABELS:
+            ax.text(pos["x"] + dim["x"] / 2, pos["y"] + dim["y"] / 2, pos["z"] + dim["z"], sp["id"], fontsize=6, ha="center", va="bottom")
+    ax.set_xlim(0, W)
+    ax.set_ylim(0, L)
+    ax.set_zlim(0, H)
+    ax.set_box_aspect((W, L, H))
+    ax.set_xticks(range(0, W + 1, 2))
+    ax.set_yticks(range(0, L + 1, 5))
+    ax.set_zticks(range(0, H + 1))
+    ax.tick_params(labelsize=7)
+    ax.set_xlabel("x (w)", fontsize=8)
+    ax.set_ylabel("y (l)", fontsize=8)
+    ax.set_zlabel("z (h)", fontsize=8)
+    ax.view_init(elev=26, azim=-28)
+    ax.set_title(f"{state['in_trucks'][truck_index]['truck']}  ({len(placed)} paket)", fontsize=10)
+
+def infoState(state):
+    lines = []
+    tot_val = 0
+    for i, t in enumerate(state["in_trucks"]):
+        value = calculateTruckValue(state, i)
+        weight = calculateTruckWeight(state, i)
+        cap = trucks[i]["max_capacity"]
+        bad = violations(state, i)
+        tot_val += value
+        lines.append(f"[{t['truck']}] value={value}  berat={weight}/{cap}")
+        lines.append("   constraint: " + ("OK" if not bad else "MELANGGAR -> " + ", ".join(bad)))
+    lines.insert(0, f"TOTAL VALUE di truk : {tot_val}")
+    lines.insert(1, "")
+ 
+    lines.append("")
+    lines.append("DI DALAM PETI KEMAS (id: x,y,z | w x l x h [orientasi])")
+    inside = []
+    for t in state["in_trucks"]:
+        for sp in t["packages"]:
+            pkg = getPackageById(sp["id"])
+            d = getDimensionXYZ({
+                "dimension": pkg["dimension"],
+                "orientation": sp["orientation"]
+            })
+            p = sp["position"]
+            o = sp["orientation"]
+            tag = " *fragile" if pkg["isFragile"] else ""
+            inside.append(
+                f"{sp['id']}: {p['x']},{p['y']},{p['z']} | {d['x']}x{d['y']}x{d['z']} "
+                f"[{o['w']}{o['l']}{o['h']}] v={pkg['value']}{tag}"
+            )
+    lines += inside if inside else ["(kosong)"]
+    lines.append("")
+    lines.append(f"DI LUAR / GUDANG ({len(state['in_warehouse'])} paket)")
+    outside = []
+    for pid in state["in_warehouse"]:
+        pkg = getPackageById(pid)
+        d = pkg["dimension"]
+        tag = " *fragile" if pkg["isFragile"] else ""
+        outside.append(f"{pid}: {d['w']}x{d['l']}x{d['h']} v={pkg['value']} berat={pkg['weight']}{tag}")
+    lines += outside if outside else ["(kosong)"]
+    return "\n".join(lines)
+
+#tampilin kondisi suatu state -> tiap crate in 3d + panel teks
+def showState(state, title="State", save_path=None, show=True, labels=False):
+    n = len(state["in_trucks"])
+    colors = colorMap(state)
+    info = infoState(state)
+    height = max(7, 0.125 * (info.count("\n") + 1) + 1)  
+    fig = plt.figure(figsize=(6.5 * n + 6, height))
+    gs = fig.add_gridspec(1, n + 1, width_ratios=[3] * n + [2.6])
+    for i in range(n):
+        ax = fig.add_subplot(gs[0, i], projection="3d")
+        drawTruckkun(ax, i, state, colors, labels)
+    ax_text = fig.add_subplot(gs[0, n])
+    ax_text.axis("off")
+    ax_text.text(0.1, 1, info, va="top", ha="left", family="monospace", fontsize=7)
+    fig.legend(
+        handles=[Patch(facecolor=FRAGILE_COLOR, edgecolor="black", label="fragile"),
+                 Patch(facecolor=PALETTE[0], edgecolor="black", label="regular")],
+        loc="lower left", fontsize=8,
+    )
+    fig.suptitle(title, fontsize=13, fontweight="bold")
+    fig.tight_layout(rect=(0, 0.03, 1, 0.95))
+    finish(fig, save_path, show)
+
+#list result dict dari sim anneal -> panel cost vs iterasi, e^(dE/T) vs iterasi, frekuensi stuck, tabel ringkasan
+def plotSA(results, save_path=None, show=True):
+    fig, axes = plt.subplots(2, 2, figsize=(14, 9))
+    ax_obj, ax_prob, ax_stuck, ax_tab = axes.flatten()
+
+    for i, r in enumerate(results):
+        ax_obj.plot(
+            r["objectiveHistory"],
+            linewidth=1,
+            label=f"Run {i + 1}"
+        )
+
+        probs = r.get("probabilityHistory", [])
+        if probs:
+            xs = [p[0] for p in probs]
+            ys = [p[1] for p in probs]
+            ax_prob.scatter(xs, ys, s=4, alpha=0.35, label=f"Run {i + 1}")
+
+    ax_obj.set_title("Objective terhadap iterasi (makin besar makin baik)")
+    ax_obj.set_xlabel("iterasi")
+    ax_obj.set_ylabel("value")
+    ax_obj.grid(alpha=0.3)
+    ax_obj.legend()
+
+    ax_prob.set_title("Probabilitas menerima move yang lebih buruk")
+    ax_prob.set_xlabel("iterasi")
+    ax_prob.set_ylabel("e^(ΔE/T)")
+    ax_prob.set_ylim(-0.02, 1.02)
+    ax_prob.grid(alpha=0.3)
+    if ax_prob.get_legend_handles_labels()[0]:
+        ax_prob.legend(markerscale=3)
+
+    labels = [f"Run {i + 1}" for i in range(len(results))]
+    stuck = [r.get("stuckCtr", 0) for r in results]
+    bars = ax_stuck.bar(labels, stuck)
+    ax_stuck.bar_label(bars)
+    ax_stuck.set_title("Frekuensi move lebih buruk yang ditolak")
+    ax_stuck.set_ylabel("jumlah")
+    ax_stuck.grid(axis="y", alpha=0.3)
+
+    ax_tab.axis("off")
+    rows = []
+    for i, r in enumerate(results):
+        rows.append([
+            f"Run {i + 1}",
+            r.get("seed", "-"),
+            r.get("iterations", len(r["objectiveHistory"]) - 1),
+            r["finalVal"],
+            f"{r['duration']:.1f}",
+            r.get("stuckCtr", "-"),
+            r.get("failedCtr", "-")
+        ])
+
+    table = ax_tab.table(
+        cellText=rows,
+        colLabels=["Run", "Seed", "Iterasi", "Value akhir", "Durasi (s)", "Stuck", "Move gagal"],
+        loc="center",
+        cellLoc="center"
+    )
+    table.auto_set_font_size(False)
+    table.set_fontsize(9)
+    table.auto_set_column_width(list(range(7)))
+    table.scale(1, 1.8)
+    ax_tab.set_title("Ringkasan eksperimen")
+
+    fig.suptitle("Simulated Annealing", fontsize=13, fontweight="bold")
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
+    finish(fig, save_path, show)
