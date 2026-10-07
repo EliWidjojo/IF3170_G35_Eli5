@@ -63,9 +63,23 @@ def runExperiment(name, label, algo):
         }
         saveRes(name, run, res)
         results.append(res)
+
+        info_init = display.infoState(initState)
+        info_final = display.infoState(finalState)
+        info_path = os.path.join(OUTPUT_DIR, f"{name}_run{run}_info.txt")
+        os.makedirs(OUTPUT_DIR, exist_ok=True)
+        with open(info_path, "w", encoding="utf-8") as f:
+            f.write(f"=== {label} - run {run} (seed={seed}) ===\n")
+            f.write(f"value akhir = {res['finalVal']} | cost = {res['finalCost']} | durasi = {res['duration']:.1f}s\n\n")
+            f.write("### INITIAL STATE ###\n")
+            f.write(info_init + "\n\n")
+            f.write("### FINAL STATE ###\n")
+            f.write(info_final + "\n")
+
         print(f"    value di truk = {res['finalVal']}"
               f" | cost = {res['finalCost']}"
               f" | durasi = {res['duration']:.1f}s")
+        print(f"    info disimpan di: {info_path}")
 
     return results
 
