@@ -24,11 +24,11 @@ def simulatedAnnealing():
         else:
             deltaE = calculateCost(nextState) - calculateCost(curState)
 
-            if deltaE >= 0:
+            if deltaE < 0:
                 curState = nextState
                 state_changed = True
             else:
-                probability = math.exp(deltaE / T)
+                probability = math.exp(-deltaE / T)
                 probabilityHistory.append((iters, probability))
 
                 if probability > random.random():
