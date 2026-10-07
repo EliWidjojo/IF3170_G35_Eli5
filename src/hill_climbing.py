@@ -84,9 +84,10 @@ def stochasticHillClimbing():
     curCost = calculateCost(curState)
     costHistory = [curCost]
 
-    for i in range(100):
+    for i in range(5000):
         neighbor = generateNeighborState(curState, "HC")
         if neighbor is curState:
+            costHistory.append(curCost)
             continue
 
         cost = calculateCost(neighbor)
