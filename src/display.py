@@ -218,7 +218,7 @@ def plotSA(results, save_path=None, show=True):
             ys = [p[1] for p in probs]
             ax_prob.scatter(xs, ys, s=4, alpha=0.35, label=f"Run {i + 1}")
 
-    ax_obj.set_title("Objective terhadap iterasi (makin besar makin baik)")
+    ax_obj.set_title("Objective terhadap iterasi")
     ax_obj.set_xlabel("iterasi")
     ax_obj.set_ylabel("value")
     ax_obj.grid(alpha=0.3)
@@ -268,3 +268,50 @@ def plotSA(results, save_path=None, show=True):
     fig.suptitle("Simulated Annealing", fontsize=13, fontweight="bold")
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     finish(fig, save_path, show)
+
+def plotGA(results, save_path=None, show=True):
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for i, res in enumerate(results, 1):
+        best_history = res["costHistory"]
+        avg_history = res["avgCostHistory"]
+
+        iterations = range(len(best_history))
+
+        # Biaya terbaik pada setiap generasi
+        ax.plot(
+            iterations,
+            best_history,
+            linestyle="-",
+            alpha=0.85,
+            label=f"Best Cost - Run {i}"
+        )
+
+        # Biaya rata-rata seluruh populasi
+        ax.plot(
+            range(len(avg_history)),
+            avg_history,
+            linestyle="--",
+            alpha=0.55,
+            label=f"Average Cost - Run {i}"
+        )
+
+    ax.set_title("Genetic Algorithm: Objective per Generation")
+    ax.set_xlabel("Generation")
+    ax.set_ylabel("Cost (lower is better)")
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    fig.tight_layout()
+
+    if save_path:
+        os.makedirs(
+            os.path.dirname(save_path) or ".",
+            exist_ok=True
+        )
+        fig.savefig(save_path, dpi=150, bbox_inches="tight")
+
+    if show:
+        plt.show()
+
+    plt.close(fig)
+

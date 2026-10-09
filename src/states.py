@@ -340,10 +340,10 @@ def generateNeighborState(state, algorithm):
         probabilities = [0.2, 0.2, 0.2, 0.2, 0.1, 0.1]
     elif algorithm == "SA":
         operations = [movePackageBetweenTrucks, swapPackageBetweenTrucks, movePackageToWarehouse, movePackageFromWarehouse, changePosition, changeOrientation]
-        probabilities = [0.25, 0.25, 0.2, 0.2, 0.05, 0.05]
+        probabilities = [0.3, 0.3, 0.1, 0.15, 0.075, 0.075]
     elif algorithm == "GA":
         operations = [movePackageBetweenTrucks, swapPackageBetweenTrucks, movePackageToWarehouse, movePackageFromWarehouse, changePosition, changeOrientation]
-        probabilities = [0.2, 0.15, 0.15, 0.15, 0.175, 0.175]
+        probabilities = [0.30, 0.25, 0.10, 0.15, 0.10, 0.10]
     else:
         raise ValueError("Unknown algorithm: {}".format(algorithm))
 

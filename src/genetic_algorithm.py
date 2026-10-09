@@ -1,6 +1,7 @@
 from states import *
 from objective_function import *
 import random
+import json
 
 def tournamentSelection(population):
     candidates = random.sample(population, 5)
@@ -49,23 +50,30 @@ def crossover(parent1, parent2):
 
     return child
 
-def mutate(state):
-    if random.random() < 0.1:
-        state = generateNeighborState(state, "GA")
-    return state
+def calculateDiversity(population):
+    uniqueStates = {
+        json.dumps(state, sort_keys=True)
+        for state in population
+    }
 
-def geneticAlgorithm():
+    return len(uniqueStates)
+
+def geneticAlgorithm(populationSize = 100, generations= 100):
     population = []
     costHistory = []
 
-    for i in range(100):
+    for i in range(populationSize):
         population.append(generateRandomState())
 
     best = min(population, key=lambda x: calculateCost(x))
     bestCost = calculateCost(best)
     initState = deepCopyState(best)
+    costHistory = [calculateCost(best)]
+    avgCostHistory = [
+        sum(calculateCost(x) for x in population) / len(population)
+    ]
 
-    for generation in range(100):
+    for generation in range(generations):
         newPopulation = []
 
         while len(newPopulation) < len(population):
@@ -73,7 +81,8 @@ def geneticAlgorithm():
             parent2 = tournamentSelection(population)
 
             child = crossover(parent1, parent2)
-            child = mutate(child)
+            if random.random() < 0.25:
+                child = generateNeighborState(child, "GA")
 
             newPopulation.append(child)
 
@@ -82,8 +91,11 @@ def geneticAlgorithm():
         bestCost = calculateCost(best)
 
         costHistory.append(bestCost)
+        avgCostHistory.append(
+            sum(calculateCost(x) for x in population) / len(population)
+        )
 
     best = min(population, key = lambda x : calculateCost(x))
     bestCost = calculateCost(best)
 
-    return best, bestCost, costHistory, initState
+    return best, bestCost, costHistory, initState, avgCostHistory, generations

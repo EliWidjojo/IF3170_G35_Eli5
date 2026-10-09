@@ -42,4 +42,4 @@ def simulatedAnnealing():
         costHistory.append(calculateCost(curState))
         T *= cooldownRate
 
-    return curState, calculateCost(curState), costHistory, initState
+    return curState, calculateCost(curState), costHistory, initState, probabilityHistory, stuckCtr, failedCtr, iters
