@@ -7,8 +7,10 @@ def hillClimbing():
     initState = deepCopyState(curState)
     curCost = calculateCost(curState)
     costHistory = [curCost]
+    iters = 0
 
     for i in range(100):
+        iters += 1
         bestNeighbor = None
         bestCost = float('inf')
 
@@ -31,7 +33,7 @@ def hillClimbing():
         else:
             break
 
-    return curState, curCost, costHistory, initState
+    return curState, curCost, costHistory, initState, iters
 
 
 def sideWaysHillClimbing():
@@ -103,13 +105,17 @@ def randomRestartHillClimbing():
     bestState = None
     bestCost = float('inf')
     allCostHistory = []
+    itersPerRestart = []
+    restarts = 0
 
     for i in range(10):
-        curState, curCost, costHistory, initState = hillClimbing()
+        restarts += 1
+        curState, curCost, costHistory, initState, iters = hillClimbing()
         allCostHistory.extend(costHistory)
+        itersPerRestart.append(iters)
 
         if curCost < bestCost:
             bestState = curState
             bestCost = curCost
 
-    return bestState, bestCost, allCostHistory, initState
+    return bestState, bestCost, allCostHistory, initState, itersPerRestart, restarts

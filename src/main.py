@@ -36,14 +36,14 @@ def loadRes(name):
         return json.load(f)
 
 #jalankan dan tampilkan
-def runSAExperiment(name, label, algo):
+def runHCSteepestExperiment(name, label, algo):
     clearRes(name)
 
     seed = random.randrange(1, 1000000)
     random.seed(seed)
- 
+
     start_time = time.perf_counter()
-    finalState, finalCost, costHistory, initState, probabilityHistory, stuckCtr, failedCtr, iters = algo()
+    finalState, finalCost, costHistory, initState, iters = algo()
     duration = time.perf_counter() - start_time
     res = {
         "initState": initState,
@@ -53,9 +53,6 @@ def runSAExperiment(name, label, algo):
         "costHistory": costHistory,
         "seed": seed,
         "duration": duration,
-        "probabilityHistory": probabilityHistory,
-        "stuckCtr": stuckCtr,
-        "failedCtr": failedCtr,
         "iterations": iters
     }
     saveRes(name, res)
@@ -66,6 +63,7 @@ def runSAExperiment(name, label, algo):
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     with open(info_path, "w", encoding="utf-8") as f:
         f.write(f"(seed={seed}) ===\n")
+        f.write(f"Jumlah iterasi = {res['iterations']}\n")
         f.write(f"value akhir = {res['finalVal']} | cost = {res['finalCost']} | durasi = {res['duration']:.1f}s\n\n")
         f.write("### INITIAL STATE ###\n")
         f.write(info_init + "\n\n")
@@ -74,7 +72,185 @@ def runSAExperiment(name, label, algo):
 
     print(f"    value di truk = {res['finalVal']}"
             f" | cost = {res['finalCost']}"
-            f" | durasi = {res['duration']:.1f}s")
+            f" | durasi = {res['duration']:.1f}s"
+            f" | iterasi = {res['iterations']}")
+    print(f"    info disimpan di: {info_path}")
+
+    return res
+
+def runHCSidewaysExperiment(name, label, algo):
+    clearRes(name)
+
+    seed = random.randrange(1, 1000000)
+    random.seed(seed)
+
+    start_time = time.perf_counter()
+    finalState, finalCost, costHistory, initState, iters, sideWaysMoves = algo()
+    duration = time.perf_counter() - start_time
+    res = {
+        "initState": initState,
+        "finalState": finalState,
+        "finalCost": finalCost,
+        "finalVal": calculateTotVal(finalState),
+        "costHistory": costHistory,
+        "seed": seed,
+        "duration": duration,
+        "iterations": iters,
+        "sideWaysMoves": sideWaysMoves,
+        "maxSideWaysMoves": 10
+    }
+    saveRes(name, res)
+
+    info_init = display.infoState(initState)
+    info_final = display.infoState(finalState)
+    info_path = os.path.join(OUTPUT_DIR, f"{name}_info.txt")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    with open(info_path, "w", encoding="utf-8") as f:
+        f.write(f"(seed={seed}) ===\n")
+        f.write(f"Jumlah iterasi = {res['iterations']}\n")
+        f.write(f"Jumlah side ways moves = {res['sideWaysMoves']} | max side ways moves = {res['maxSideWaysMoves']}\n")
+        f.write(f"value akhir = {res['finalVal']} | cost = {res['finalCost']} | durasi = {res['duration']:.1f}s\n\n")
+        f.write("### INITIAL STATE ###\n")
+        f.write(info_init + "\n\n")
+        f.write("### FINAL STATE ###\n")
+        f.write(info_final + "\n")
+
+    print(f"    value di truk = {res['finalVal']}"
+            f" | cost = {res['finalCost']}"
+            f" | durasi = {res['duration']:.1f}s"
+            f" | iterasi = {res['iterations']}"
+            f" | max side ways moves = {res['maxSideWaysMoves']}")
+    print(f"    info disimpan di: {info_path}")
+
+    return res
+
+def runHCStochasticExperiment(name, label, algo):
+    clearRes(name)
+    
+    seed = random.randrange(1, 1000000)
+    random.seed(seed)
+
+    start_time = time.perf_counter()
+    finalState, finalCost, costHistory, initState, iters = algo()
+    duration = time.perf_counter() - start_time
+    res = {
+        "initState": initState,
+        "finalState": finalState,
+        "finalCost": finalCost,
+        "finalVal": calculateTotVal(finalState),
+        "costHistory": costHistory,
+        "seed": seed,
+        "duration": duration,
+        "iterations": iters
+    }
+    saveRes(name, res)
+
+    info_init = display.infoState(initState)
+    info_final = display.infoState(finalState)
+    info_path = os.path.join(OUTPUT_DIR, f"{name}_info.txt")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    with open(info_path, "w", encoding="utf-8") as f:
+        f.write(f"(seed={seed}) ===\n")
+        f.write(f"Jumlah iterasi = {res['iterations']}\n")
+        f.write(f"value akhir = {res['finalVal']} | cost = {res['finalCost']} | durasi = {res['duration']:.1f}s\n\n")
+        f.write("### INITIAL STATE ###\n")
+        f.write(info_init + "\n\n")
+        f.write("### FINAL STATE ###\n")
+        f.write(info_final + "\n")
+
+    print(f"    value di truk = {res['finalVal']}"
+            f" | cost = {res['finalCost']}"
+            f" | durasi = {res['duration']:.1f}s"
+            f" | iterasi = {res['iterations']}")
+    print(f"    info disimpan di: {info_path}")
+
+    return res
+
+def runHCRandomRestartExperiment(name, label, algo):
+    clearRes(name)
+    
+    seed = random.randrange(1, 1000000)
+    random.seed(seed)
+
+    start_time = time.perf_counter()
+    finalState, finalCost, costHistory, initState, itersPerRestart, restarts = algo()
+    duration = time.perf_counter() - start_time
+    res = {
+        "initState": initState,
+        "finalState": finalState,
+        "finalCost": finalCost,
+        "finalVal": calculateTotVal(finalState),
+        "costHistory": costHistory,
+        "seed": seed,
+        "duration": duration,
+        "iterationsPerRestart": itersPerRestart,
+        "restarts": restarts
+    }
+    saveRes(name, res)
+
+    info_init = display.infoState(initState)
+    info_final = display.infoState(finalState)
+    info_path = os.path.join(OUTPUT_DIR, f"{name}_info.txt")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    with open(info_path, "w", encoding="utf-8") as f:
+        f.write(f"(seed={seed}) ===\n")
+        f.write(f"Iterasi per restart = {res['iterationsPerRestart']}\n")
+        f.write(f"Jumlah restart = {res['restarts']}\n")
+        f.write(f"value akhir = {res['finalVal']} | cost = {res['finalCost']} | durasi = {res['duration']:.1f}s\n\n")
+        f.write("### INITIAL STATE ###\n")
+        f.write(info_init + "\n\n")
+        f.write("### FINAL STATE ###\n")
+        f.write(info_final + "\n")
+
+    print(f"    value di truk = {res['finalVal']}"
+            f" | cost = {res['finalCost']}"
+            f" | durasi = {res['duration']:.1f}s"
+            f" | iterasi per restart = {res['iterationsPerRestart']}"
+            f" | restart = {res['restarts']}")
+    print(f"    info disimpan di: {info_path}")
+
+    return res
+
+def runSAExperiment(name, label, algo):
+    clearRes(name)
+
+    seed = random.randrange(1, 1000000)
+    random.seed(seed)
+ 
+    start_time = time.perf_counter()
+    finalState, finalCost, costHistory, initState, probabilityHistory, rejectedWorseMoves, iters = algo()
+    duration = time.perf_counter() - start_time
+    res = {
+        "initState": initState,
+        "finalState": finalState,
+        "finalCost": finalCost,
+        "finalVal": calculateTotVal(finalState),
+        "costHistory": costHistory,
+        "seed": seed,
+        "duration": duration,
+        "probabilityHistory": probabilityHistory,
+        "rejectedWorseMoves": rejectedWorseMoves,
+        "iterations": iters
+    }
+    saveRes(name, res)
+
+    info_init = display.infoState(initState)
+    info_final = display.infoState(finalState)
+    info_path = os.path.join(OUTPUT_DIR, f"{name}_info.txt")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    with open(info_path, "w", encoding="utf-8") as f:
+        f.write(f"(seed={seed}) ===\n")
+        f.write(f"Frekuensi stuck di local optimum (asumsinya itu berapa kali dia reject worser moves) = {res['rejectedWorseMoves']}\n")
+        f.write(f"value akhir = {res['finalVal']} | cost = {res['finalCost']} | durasi = {res['duration']:.1f}s\n\n")
+        f.write("### INITIAL STATE ###\n")
+        f.write(info_init + "\n\n")
+        f.write("### FINAL STATE ###\n")
+        f.write(info_final + "\n")
+
+    print(f"    value di truk = {res['finalVal']}"
+            f" | cost = {res['finalCost']}"
+            f" | durasi = {res['duration']:.1f}s"
+            f" | frekuensi stuck di local optimum (asumsinya itu berapa kali dia reject worser moves) = {res['rejectedWorseMoves']}")
     print(f"    info disimpan di: {info_path}")
 
     return res

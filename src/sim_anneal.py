@@ -11,35 +11,26 @@ def simulatedAnnealing():
     initState = deepCopyState(curState)
     costHistory = [calculateCost(curState)]
     probabilityHistory = []
-    stuckCtr = 0
-    failedCtr = 0
+    rejectedWorseMoves = 0
     iters = 0
 
     while (T > 0.1):
         nextState = generateNeighborState(curState, "SA")
-        state_changed = False
+        deltaE = calculateCost(nextState) - calculateCost(curState)
 
-        if nextState is curState:
-            failedCtr += 1
+        if deltaE < 0:
+            curState = nextState
         else:
-            deltaE = calculateCost(nextState) - calculateCost(curState)
+            probability = math.exp(-deltaE / T)
+            probabilityHistory.append((iters, probability))
 
-            if deltaE < 0:
+            if probability > random.random():
                 curState = nextState
-                state_changed = True
-            else:
-                probability = math.exp(-deltaE / T)
-                probabilityHistory.append((iters, probability))
-
-                if probability > random.random():
-                    curState = nextState
-                    state_changed = True
-
-        if not state_changed:
-            stuckCtr += 1
+            else: 
+                rejectedWorseMoves += 1 
 
         iters += 1
         costHistory.append(calculateCost(curState))
         T *= cooldownRate
 
-    return curState, calculateCost(curState), costHistory, initState, probabilityHistory, stuckCtr, failedCtr, iters
+    return curState, calculateCost(curState), costHistory, initState, probabilityHistory, rejectedWorseMoves, iters
