@@ -2,7 +2,7 @@ from states import *
 from objective_function import *
 
 
-def hillClimbing():
+def steepestAscentHillClimbing():
     curState = generateRandomState()
     initState = deepCopyState(curState)
     curCost = calculateCost(curState)
@@ -36,15 +36,16 @@ def hillClimbing():
     return curState, curCost, costHistory, initState, iters
 
 
-def sideWaysHillClimbing():
+def sideWaysHillClimbing(maxSideWaysMoves=10):
     curState = generateRandomState()
     initState = deepCopyState(curState)
     curCost = calculateCost(curState)
     costHistory = [curCost]
+    iters = 0
     sideWaysMoves = 0
-    maxSideWaysMoves = 10
 
     for i in range(100):
+        iters += 1
         bestNeighbor = None
         bestCost = float('inf')
 
@@ -76,7 +77,7 @@ def sideWaysHillClimbing():
         else:
             break
 
-    return curState, curCost, costHistory, initState
+    return curState, curCost, costHistory, initState, iters, sideWaysMoves
 
 
 def stochasticHillClimbing():
@@ -84,8 +85,10 @@ def stochasticHillClimbing():
     initState = deepCopyState(curState)
     curCost = calculateCost(curState)
     costHistory = [curCost]
+    iters = 0
 
     for i in range(5000):
+        iters += 1
         neighbor = generateNeighborState(curState, "HC")
         if neighbor is curState:
             costHistory.append(curCost)
@@ -98,24 +101,26 @@ def stochasticHillClimbing():
 
         costHistory.append(curCost)
 
-    return curState, curCost, costHistory, initState
+    return curState, curCost, costHistory, initState, iters
 
 
-def randomRestartHillClimbing():
+def randomRestartHillClimbing(maxRestarts=10):
     bestState = None
     bestCost = float('inf')
+    bestInitState = None
     allCostHistory = []
     itersPerRestart = []
     restarts = 0
 
-    for i in range(10):
+    for i in range(maxRestarts):
         restarts += 1
-        curState, curCost, costHistory, initState, iters = hillClimbing()
+        curState, curCost, costHistory, initState, iters = steepestAscentHillClimbing()
         allCostHistory.extend(costHistory)
         itersPerRestart.append(iters)
 
         if curCost < bestCost:
             bestState = curState
             bestCost = curCost
+            bestInitState = initState
 
-    return bestState, bestCost, allCostHistory, initState, itersPerRestart, restarts
+    return bestState, bestCost, allCostHistory, bestInitState, itersPerRestart, restarts

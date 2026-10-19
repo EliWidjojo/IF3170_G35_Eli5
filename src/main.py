@@ -9,7 +9,7 @@ OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 SHOW_WINDOWS = True #kalau false, gambarnya cuman disave jadi png, ga ditampilin
 
 ALGOS = { #file name, display name, func, ma func plot hasil
-    "1": ("HC-SA", "Hill Climbing Steepest Ascent", hillClimbing, display.plotSA),
+    "1": ("HC-SA", "Hill Climbing Steepest Ascent", steepestAscentHillClimbing, display.plotSA),
     "2": ("HC-SM", "Hill Climbing with Sideways Move", sideWaysHillClimbing, display.plotSA),
     "3": ("HC-S", "Stochastic Hill Climbing", stochasticHillClimbing, display.plotSA),
     "4": ("HC-RR", "Random Restart Hill Climbing", randomRestartHillClimbing, display.plotSA),
@@ -119,6 +119,7 @@ def runHCSidewaysExperiment(name, label, algo):
             f" | cost = {res['finalCost']}"
             f" | durasi = {res['duration']:.1f}s"
             f" | iterasi = {res['iterations']}"
+            f" | sideways moves dilakukan = {res['sideWaysMoves']}"
             f" | max side ways moves = {res['maxSideWaysMoves']}")
     print(f"    info disimpan di: {info_path}")
 
@@ -373,8 +374,14 @@ def main():
                 print(f"Belum ada hasil tersimpan untuk {label}. Jalankan dulu dengan 'r'.")
                 continue
         else:
-            if choice == "1-4":
-                print("Test")
+            if choice == "1":
+                results = runHCSteepestExperiment(name, label, algo)
+            elif choice == "2":
+                results = runHCSidewaysExperiment(name, label, algo)
+            elif choice == "3":
+                results = runHCStochasticExperiment(name, label, algo)
+            elif choice == "4":
+                results = runHCRandomRestartExperiment(name, label, algo)
             elif choice == "5":
                 results = runSAExperiment(name, label, algo)
             elif choice == "6":
