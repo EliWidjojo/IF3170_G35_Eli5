@@ -27,7 +27,7 @@ def get_run_dir(name, run):
 def get_next_run(name):
     if not os.path.exists(OUTPUT_DIR):
         return 1
-    runs = [1]
+    runs = [0]
     for f in os.listdir(OUTPUT_DIR):
         if f.startswith(f"{name}_run"):
             try:
@@ -181,7 +181,7 @@ def runHCRandomRestartExperiment(name, label, algo, run, max_rr=10):
     random.seed(seed)
 
     start_time = time.perf_counter()
-    finalState, finalCost, costHistory, initState, itersPerRestart, restarts = algo(maxRestarts=max_rr)
+    finalState, finalCost, costHistory, initState, itersPerRestart, restarts, totalIters = algo(maxRestarts=max_rr)
     duration = time.perf_counter() - start_time
     res = {
         "initState": initState,
@@ -191,6 +191,7 @@ def runHCRandomRestartExperiment(name, label, algo, run, max_rr=10):
         "costHistory": costHistory,
         "seed": seed,
         "duration": duration,
+        "iterations": totalIters,
         "iterationsPerRestart": itersPerRestart,
         "restarts": restarts,
         "maxRestarts": max_rr
@@ -205,6 +206,7 @@ def runHCRandomRestartExperiment(name, label, algo, run, max_rr=10):
         f.write(f"(seed={seed}) ===\n")
         f.write(f"Iterasi per restart = {res['iterationsPerRestart']}\n")
         f.write(f"Jumlah restart = {res['restarts']}\n")
+        f.write(f"Total iterasi = {res['iterations']}\n")
         f.write(f"value akhir = {res['finalVal']} | cost = {res['finalCost']} | durasi = {res['duration']:.1f}s\n\n")
         f.write("### INITIAL STATE ###\n")
         f.write(info_init + "\n\n")
@@ -215,8 +217,8 @@ def runHCRandomRestartExperiment(name, label, algo, run, max_rr=10):
             f" | cost = {res['finalCost']}"
             f" | durasi = {res['duration']:.1f}s"
             f" | iterasi per restart = {res['iterationsPerRestart']}"
-            f" | restart = {res['restarts']}"
-            f" | max restart = {res['maxRestarts']}")
+            f" | total iterasi = {res['iterations']}"
+            f" | jumlah restart = {res['restarts']}")
     print(f"    info disimpan di: {info_path}")
 
     return res

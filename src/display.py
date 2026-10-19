@@ -235,11 +235,13 @@ def plotHC(results, save_path=None, show=True, title="Algorithm"):
     if "sideWaysMoves" in r:
         headers.append("Sideways Moves")
         values.append(str(r.get("sideWaysMoves", "-")))
+        headers.append("Max Sideways Moves")
+        values.append(str(r.get("maxSideWaysMoves", "-")))
         
     if "restarts" in r:
         headers.append("Restarts")
         values.append(str(r.get("restarts", "-")))
-        
+
     if "iterationsPerRestart" in r:
         headers.append("Avg Iter/Restart")
         val = r.get("iterationsPerRestart", [])
