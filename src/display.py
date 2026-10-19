@@ -214,53 +214,43 @@ def plotHC(results, save_path=None, show=True, title="Algorithm"):
             range(len(history)),
             history,
             linewidth=1.5,
-            label=f"Run {i + 1}"
         )
 
     ax_obj.set_xlabel("Iterasi")
     ax_obj.set_ylabel("Cost")
     ax_obj.grid(alpha=0.3)
-    if len(results) > 0:
-        ax_obj.legend()
 
     # tabel ringkasan
     ax_tab.axis("off")
-    
-    headers = ["Run", "Value", "Cost", "Durasi", "Iterasi"]
-    keys = ["finalVal", "finalCost", "duration", "iterations"]
-    
-    if any("sideWaysMoves" in r for r in results):
-        headers.append("Sideways Moves")
-        keys.append("sideWaysMoves")
-        
-    if any("restarts" in r for r in results):
-        headers.append("Restarts")
-        keys.append("restarts")
-        
-    if any("iterationsPerRestart" in r for r in results):
-        headers.append("Avg Iter/Restart")
-        keys.append("iterationsPerRestart")
+    r = results[0]
 
-    rows = []
-    for i, r in enumerate(results):
-        row = [f"Run {i+1}"]
-        for k in keys:
-            val = r.get(k, "-")
-            
-            if k == "duration":
-                row.append(f"{val:.1f}s" if isinstance(val, (int, float)) else val)
-            elif k == "iterationsPerRestart":
-                if isinstance(val, list) and len(val) > 0:
-                    avg = sum(val) / len(val)
-                    row.append(f"{avg:.1f}")
-                else:
-                    row.append("-")
-            else:
-                row.append(str(val))
-        rows.append(row)
+    headers = ["Value", "Cost", "Durasi", "Iterasi"]
+    values = [
+        str(r.get("finalVal", "-")),
+        str(r.get("finalCost", "-")),
+        f"{r.get('duration', 0):.1f}s",
+        str(r.get("iterations", "-"))
+    ]
+    
+    if "sideWaysMoves" in r:
+        headers.append("Sideways Moves")
+        values.append(str(r.get("sideWaysMoves", "-")))
+        
+    if "restarts" in r:
+        headers.append("Restarts")
+        values.append(str(r.get("restarts", "-")))
+        
+    if "iterationsPerRestart" in r:
+        headers.append("Avg Iter/Restart")
+        val = r.get("iterationsPerRestart", [])
+        if isinstance(val, list) and len(val) > 0:
+            avg = sum(val) / len(val)
+            values.append(f"{avg:.1f}")
+        else:
+            values.append("-")
 
     table = ax_tab.table(
-        cellText=rows, 
+        cellText=[values], 
         colLabels=headers, 
         loc="center", 
         cellLoc="center"
@@ -275,7 +265,7 @@ def plotHC(results, save_path=None, show=True, title="Algorithm"):
     finish(fig, save_path, show)
 
 #list result dict dari sim anneal -> panel cost vs iterasi, e^(dE/T) vs iterasi, frekuensi stuck, tabel ringkasan
-def plotSA(results, save_path=None, show=True):
+def plotSA(results, save_path=None, show=True, title="Algorithm"):
     fig, axes = plt.subplots(2, 2, figsize=(14, 9))
     ax_obj, ax_prob, ax_stuck, ax_tab = axes.flatten()
 
@@ -283,28 +273,24 @@ def plotSA(results, save_path=None, show=True):
         ax_obj.plot(
             r["costHistory"],
             linewidth=1,
-            label=f"Run {i + 1}"
         )
 
         probs = r.get("probabilityHistory", [])
         if probs:
             xs = [p[0] for p in probs]
             ys = [p[1] for p in probs]
-            ax_prob.scatter(xs, ys, s=4, alpha=0.35, label=f"Run {i + 1}")
+            ax_prob.scatter(xs, ys, s=4, alpha=0.35)
 
     ax_obj.set_title("Objective terhadap iterasi")
     ax_obj.set_xlabel("iterasi")
     ax_obj.set_ylabel("value")
     ax_obj.grid(alpha=0.3)
-    ax_obj.legend()
 
     ax_prob.set_title("Probabilitas menerima move yang lebih buruk")
     ax_prob.set_xlabel("iterasi")
     ax_prob.set_ylabel("e^(ΔE/T)")
     ax_prob.set_ylim(-0.02, 1.02)
     ax_prob.grid(alpha=0.3)
-    if ax_prob.get_legend_handles_labels()[0]:
-        ax_prob.legend(markerscale=3)
 
     labels = [f"Run {i + 1}" for i in range(len(results))]
     stuck = [r.get("stuckCtr", 0) for r in results]
@@ -339,11 +325,11 @@ def plotSA(results, save_path=None, show=True):
     table.scale(1, 1.8)
     ax_tab.set_title("Ringkasan eksperimen")
 
-    fig.suptitle("Simulated Annealing", fontsize=13, fontweight="bold")
+    fig.suptitle(title, fontsize=13, fontweight="bold")
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     finish(fig, save_path, show)
 
-def plotGA(results, save_path=None, show=True):
+def plotGA(results, save_path=None, show=True, title="Algorithm"):
     fig, ax = plt.subplots(figsize=(10, 6))
 
     for i, res in enumerate(results, 1):
@@ -358,7 +344,7 @@ def plotGA(results, save_path=None, show=True):
             best_history,
             linestyle="-",
             alpha=0.85,
-            label=f"Best Cost - Run {i}"
+            label=f"Best Cost"
         )
 
         # Biaya rata-rata seluruh populasi
@@ -367,7 +353,7 @@ def plotGA(results, save_path=None, show=True):
             avg_history,
             linestyle="--",
             alpha=0.55,
-            label=f"Average Cost - Run {i}"
+            label=f"Average Cost"
         )
 
     ax.set_title("Genetic Algorithm: Objective per Generation")
