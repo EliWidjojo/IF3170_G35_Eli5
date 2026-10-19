@@ -9,10 +9,10 @@ OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 SHOW_WINDOWS = True #kalau false, gambarnya cuman disave jadi png, ga ditampilin
 
 ALGOS = { #file name, display name, func, ma func plot hasil
-    "1": ("HC-SA", "Hill Climbing Steepest Ascent", steepestAscentHillClimbing, display.plotSA),
-    "2": ("HC-SM", "Hill Climbing with Sideways Move", sideWaysHillClimbing, display.plotSA),
-    "3": ("HC-S", "Stochastic Hill Climbing", stochasticHillClimbing, display.plotSA),
-    "4": ("HC-RR", "Random Restart Hill Climbing", randomRestartHillClimbing, display.plotSA),
+    "1": ("HC-SA", "Hill Climbing Steepest Ascent", steepestAscentHillClimbing, display.plotHC),
+    "2": ("HC-SM", "Hill Climbing with Sideways Move", sideWaysHillClimbing, display.plotHC),
+    "3": ("HC-S", "Stochastic Hill Climbing", stochasticHillClimbing, display.plotHC),
+    "4": ("HC-RR", "Random Restart Hill Climbing", randomRestartHillClimbing, display.plotHC),
     "5": ("SA", "Simulated Annealing", simulatedAnnealing, display.plotSA),
     "6": ("GA", "Genetic Algorithm", geneticAlgorithm, display.plotGA)
     #tambahin yang lain yaw
@@ -347,7 +347,8 @@ def showResults(name, label, result, plotFunc):
     plotFunc(
         [result],
         save_path=os.path.join(OUTPUT_DIR, f"{name}_plot.png"),
-        show=SHOW_WINDOWS
+        show=SHOW_WINDOWS,
+        title=label
     )
 
 def main():

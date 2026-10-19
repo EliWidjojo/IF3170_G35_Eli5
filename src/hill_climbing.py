@@ -30,6 +30,7 @@ def steepestAscentHillClimbing():
         if bestCost < curCost:
             curState = bestNeighbor
             curCost = bestCost
+            costHistory.append(curCost)
         else:
             break
 
