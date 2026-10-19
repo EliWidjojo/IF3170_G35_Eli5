@@ -193,7 +193,11 @@ def showState(state, title="State", save_path=None, show=True, labels=False):
     ax_text.text(0.1, 1, info, va="top", ha="left", family="monospace", fontsize=7)
     fig.legend(
         handles=[Patch(facecolor=FRAGILE_COLOR, edgecolor="black", label="fragile"),
-                 Patch(facecolor=PALETTE[0], edgecolor="black", label="regular")],
+                    *[
+                        Patch(facecolor=color, edgecolor="black", label="regular")
+                        for i, color in enumerate(PALETTE)
+                    ],
+                ],
         loc="lower left", fontsize=8,
     )
     fig.suptitle(title, fontsize=13, fontweight="bold")
