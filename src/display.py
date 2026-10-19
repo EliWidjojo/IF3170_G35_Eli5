@@ -204,6 +204,80 @@ def showState(state, title="State", save_path=None, show=True, labels=False):
     fig.tight_layout(rect=(0, 0.03, 1, 0.95))
     finish(fig, save_path, show)
 
+def plotHC(results, save_path=None, show=True, title="Algorithm"):
+    fig = plt.figure(figsize=(12, 8))
+    gs = fig.add_gridspec(2, 1, height_ratios=[3, 1])
+    
+    ax_obj = fig.add_subplot(gs[0, 0])
+    ax_tab = fig.add_subplot(gs[1, 0])
+
+    # plot cost vs iterasi
+    for i, r in enumerate(results):
+        history = r.get("costHistory", [])
+        ax_obj.plot(
+            range(len(history)),
+            history,
+            linewidth=1.5,
+            label=f"Run {i + 1}"
+        )
+
+    ax_obj.set_xlabel("Iterasi")
+    ax_obj.set_ylabel("Cost")
+    ax_obj.grid(alpha=0.3)
+    if len(results) > 0:
+        ax_obj.legend()
+
+    # tabel ringkasan
+    ax_tab.axis("off")
+    
+    headers = ["Run", "Value", "Cost", "Durasi", "Iterasi"]
+    keys = ["finalVal", "finalCost", "duration", "iterations"]
+    
+    if any("sideWaysMoves" in r for r in results):
+        headers.append("Sideways Moves")
+        keys.append("sideWaysMoves")
+        
+    if any("restarts" in r for r in results):
+        headers.append("Restarts")
+        keys.append("restarts")
+        
+    if any("iterationsPerRestart" in r for r in results):
+        headers.append("Avg Iter/Restart")
+        keys.append("iterationsPerRestart")
+
+    rows = []
+    for i, r in enumerate(results):
+        row = [f"Run {i+1}"]
+        for k in keys:
+            val = r.get(k, "-")
+            
+            if k == "duration":
+                row.append(f"{val:.1f}s" if isinstance(val, (int, float)) else val)
+            elif k == "iterationsPerRestart":
+                if isinstance(val, list) and len(val) > 0:
+                    avg = sum(val) / len(val)
+                    row.append(f"{avg:.1f}")
+                else:
+                    row.append("-")
+            else:
+                row.append(str(val))
+        rows.append(row)
+
+    table = ax_tab.table(
+        cellText=rows, 
+        colLabels=headers, 
+        loc="center", 
+        cellLoc="center"
+    )
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.auto_set_column_width(list(range(len(headers))))
+    table.scale(1, 1.8)
+
+    fig.suptitle(title, fontsize=14, fontweight="bold")
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    finish(fig, save_path, show)
+
 #list result dict dari sim anneal -> panel cost vs iterasi, e^(dE/T) vs iterasi, frekuensi stuck, tabel ringkasan
 def plotSA(results, save_path=None, show=True):
     fig, axes = plt.subplots(2, 2, figsize=(14, 9))
