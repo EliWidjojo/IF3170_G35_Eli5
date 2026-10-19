@@ -182,15 +182,24 @@ def showState(state, title="State", save_path=None, show=True, labels=False):
     n = len(state["in_trucks"])
     colors = colorMap(state)
     info = infoState(state)
-    height = max(7, 0.125 * (info.count("\n") + 1) + 1)  
-    fig = plt.figure(figsize=(6.5 * n + 6, height))
-    gs = fig.add_gridspec(1, n + 1, width_ratios=[3] * n + [2.6])
+    lines = info.split("\n")
+    max_line_len = max(len(line) for line in lines)
+    height = max(8, 0.20 * len(lines) + 1)
+    text_width = max(4.5, min(8, max_line_len * 0.075)) 
+    fig = plt.figure(
+        figsize=(6.5 * n + text_width, height)
+    )
+
+    gs = fig.add_gridspec(
+        1, n + 1,
+        width_ratios=[3] * n + [text_width / 2]
+    )
     for i in range(n):
         ax = fig.add_subplot(gs[0, i], projection="3d")
         drawTruckkun(ax, i, state, colors, labels)
     ax_text = fig.add_subplot(gs[0, n])
     ax_text.axis("off")
-    ax_text.text(0.1, 1, info, va="top", ha="left", family="monospace", fontsize=7)
+    ax_text.text(0, 1, info, va="top", ha="left", family="monospace", fontsize=7, transform=ax_text.transAxes, wrap=True)
     fig.legend(
         handles=[Patch(facecolor=FRAGILE_COLOR, edgecolor="black", label="fragile"),
                     *[

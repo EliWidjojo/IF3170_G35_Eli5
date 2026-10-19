@@ -6,114 +6,23 @@
         "truck": "truckManhattanCafe",
         "packages": [
           {
-            "id": 8,
-            "position": {
-              "x": 2,
-              "y": 1,
-              "z": 0
-            },
-            "orientation": {
-              "w": "x",
-              "l": "y",
-              "h": "z"
-            }
-          },
-          {
-            "id": 2,
-            "position": {
-              "x": 2,
-              "y": 8,
-              "z": 0
-            },
-            "orientation": {
-              "w": "z",
-              "l": "x",
-              "h": "y"
-            }
-          },
-          {
-            "id": 11,
-            "position": {
-              "x": 0,
-              "y": 8,
-              "z": 0
-            },
-            "orientation": {
-              "w": "y",
-              "l": "z",
-              "h": "x"
-            }
-          },
-          {
-            "id": 22,
-            "position": {
-              "x": 1,
-              "y": 6,
-              "z": 3
-            },
-            "orientation": {
-              "w": "x",
-              "l": "z",
-              "h": "y"
-            }
-          },
-          {
-            "id": 15,
+            "id": 28,
             "position": {
               "x": 3,
-              "y": 7,
-              "z": 0
-            },
-            "orientation": {
-              "w": "z",
-              "l": "x",
-              "h": "y"
-            }
-          },
-          {
-            "id": 17,
-            "position": {
-              "x": 1,
-              "y": 7,
+              "y": 6,
               "z": 0
             },
             "orientation": {
               "w": "y",
-              "l": "z",
-              "h": "x"
-            }
-          },
-          {
-            "id": 24,
-            "position": {
-              "x": 0,
-              "y": 0,
-              "z": 0
-            },
-            "orientation": {
-              "w": "x",
-              "l": "y",
+              "l": "x",
               "h": "z"
             }
           },
           {
-            "id": 10,
+            "id": 18,
             "position": {
-              "x": 0,
-              "y": 9,
-              "z": 0
-            },
-            "orientation": {
-              "w": "x",
-              "l": "z",
-              "h": "y"
-            }
-          },
-          {
-            "id": 12,
-            "position": {
-              "x": 0,
-              "y": 12,
+              "x": 6,
+              "y": 13,
               "z": 1
             },
             "orientation": {
@@ -123,29 +32,29 @@
             }
           },
           {
-            "id": 0,
+            "id": 10,
             "position": {
               "x": 0,
-              "y": 2,
+              "y": 0,
               "z": 0
             },
             "orientation": {
-              "w": "y",
+              "w": "x",
               "l": "z",
-              "h": "x"
+              "h": "y"
             }
           },
           {
-            "id": 6,
+            "id": 13,
             "position": {
-              "x": 1,
-              "y": 3,
+              "x": 4,
+              "y": 8,
               "z": 0
             },
             "orientation": {
               "w": "y",
-              "l": "z",
-              "h": "x"
+              "l": "x",
+              "h": "z"
             }
           }
         ]
@@ -154,76 +63,24 @@
         "truck": "truckHishiAkebono",
         "packages": [
           {
-            "id": 16,
+            "id": 14,
             "position": {
-              "x": 3,
-              "y": 26,
-              "z": 3
+              "x": 11,
+              "y": 17,
+              "z": 1
             },
             "orientation": {
-              "w": "z",
-              "l": "y",
+              "w": "y",
+              "l": "z",
               "h": "x"
             }
           },
           {
             "id": 29,
             "position": {
-              "x": 0,
-              "y": 3,
-              "z": 0
-            },
-            "orientation": {
-              "w": "x",
-              "l": "z",
-              "h": "y"
-            }
-          },
-          {
-            "id": 7,
-            "position": {
-              "x": 8,
-              "y": 5,
+              "x": 7,
+              "y": 4,
               "z": 2
-            },
-            "orientation": {
-              "w": "x",
-              "l": "y",
-              "h": "z"
-            }
-          },
-          {
-            "id": 3,
-            "position": {
-              "x": 4,
-              "y": 26,
-              "z": 0
-            },
-            "orientation": {
-              "w": "x",
-              "l": "z",
-              "h": "y"
-            }
-          },
-          {
-            "id": 26,
-            "position": {
-              "x": 5,
-              "y": 28,
-              "z": 2
-            },
-            "orientation": {
-              "w": "y",
-              "l": "x",
-              "h": "z"
-            }
-          },
-          {
-            "id": 9,
-            "position": {
-              "x": 5,
-              "y": 20,
-              "z": 0
             },
             "orientation": {
               "w": "z",
@@ -232,120 +89,50 @@
             }
           },
           {
-            "id": 1,
+            "id": 11,
             "position": {
               "x": 2,
-              "y": 27,
-              "z": 6
-            },
-            "orientation": {
-              "w": "y",
-              "l": "x",
-              "h": "z"
-            }
-          },
-          {
-            "id": 13,
-            "position": {
-              "x": 7,
-              "y": 13,
-              "z": 3
-            },
-            "orientation": {
-              "w": "y",
-              "l": "z",
-              "h": "x"
-            }
-          },
-          {
-            "id": 5,
-            "position": {
-              "x": 4,
-              "y": 15,
-              "z": 3
-            },
-            "orientation": {
-              "w": "z",
-              "l": "y",
-              "h": "x"
-            }
-          },
-          {
-            "id": 14,
-            "position": {
-              "x": 6,
-              "y": 26,
+              "y": 36,
               "z": 0
             },
             "orientation": {
-              "w": "y",
-              "l": "x",
-              "h": "z"
-            }
-          },
-          {
-            "id": 28,
-            "position": {
-              "x": 2,
-              "y": 17,
-              "z": 4
-            },
-            "orientation": {
-              "w": "y",
-              "l": "z",
-              "h": "x"
-            }
-          },
-          {
-            "id": 21,
-            "position": {
-              "x": 7,
-              "y": 1,
-              "z": 2
-            },
-            "orientation": {
               "w": "x",
               "l": "y",
               "h": "z"
-            }
-          }
-        ]
-      },
-      {
-        "truck": "truckNishinoFlower",
-        "packages": [
-          {
-            "id": 18,
-            "position": {
-              "x": 0,
-              "y": 5,
-              "z": 5
-            },
-            "orientation": {
-              "w": "x",
-              "l": "z",
-              "h": "y"
-            }
-          },
-          {
-            "id": 20,
-            "position": {
-              "x": 0,
-              "y": 1,
-              "z": 6
-            },
-            "orientation": {
-              "w": "z",
-              "l": "x",
-              "h": "y"
             }
           },
           {
             "id": 4,
             "position": {
-              "x": 0,
-              "y": 0,
-              "z": 5
+              "x": 6,
+              "y": 9,
+              "z": 3
+            },
+            "orientation": {
+              "w": "x",
+              "l": "z",
+              "h": "y"
+            }
+          },
+          {
+            "id": 1,
+            "position": {
+              "x": 5,
+              "y": 15,
+              "z": 0
+            },
+            "orientation": {
+              "w": "x",
+              "l": "y",
+              "h": "z"
+            }
+          },
+          {
+            "id": 24,
+            "position": {
+              "x": 6,
+              "y": 33,
+              "z": 2
             },
             "orientation": {
               "w": "x",
@@ -356,34 +143,164 @@
           {
             "id": 27,
             "position": {
-              "x": 1,
-              "y": 1,
-              "z": 2
+              "x": 0,
+              "y": 6,
+              "z": 6
+            },
+            "orientation": {
+              "w": "y",
+              "l": "z",
+              "h": "x"
+            }
+          },
+          {
+            "id": 22,
+            "position": {
+              "x": 3,
+              "y": 7,
+              "z": 7
+            },
+            "orientation": {
+              "w": "x",
+              "l": "z",
+              "h": "y"
+            }
+          },
+          {
+            "id": 8,
+            "position": {
+              "x": 9,
+              "y": 37,
+              "z": 0
+            },
+            "orientation": {
+              "w": "x",
+              "l": "z",
+              "h": "y"
+            }
+          },
+          {
+            "id": 3,
+            "position": {
+              "x": 2,
+              "y": 10,
+              "z": 0
+            },
+            "orientation": {
+              "w": "y",
+              "l": "z",
+              "h": "x"
+            }
+          },
+          {
+            "id": 9,
+            "position": {
+              "x": 4,
+              "y": 8,
+              "z": 0
             },
             "orientation": {
               "w": "z",
-              "l": "y",
-              "h": "x"
+              "l": "x",
+              "h": "y"
             }
           },
           {
             "id": 19,
             "position": {
-              "x": 1,
-              "y": 0,
-              "z": 1
+              "x": 7,
+              "y": 9,
+              "z": 0
             },
             "orientation": {
               "w": "z",
-              "l": "y",
+              "l": "x",
+              "h": "y"
+            }
+          },
+          {
+            "id": 20,
+            "position": {
+              "x": 3,
+              "y": 6,
+              "z": 0
+            },
+            "orientation": {
+              "w": "y",
+              "l": "z",
               "h": "x"
             }
           },
           {
-            "id": 23,
+            "id": 15,
+            "position": {
+              "x": 6,
+              "y": 18,
+              "z": 5
+            },
+            "orientation": {
+              "w": "z",
+              "l": "x",
+              "h": "y"
+            }
+          },
+          {
+            "id": 7,
+            "position": {
+              "x": 9,
+              "y": 2,
+              "z": 4
+            },
+            "orientation": {
+              "w": "z",
+              "l": "x",
+              "h": "y"
+            }
+          },
+          {
+            "id": 12,
+            "position": {
+              "x": 10,
+              "y": 25,
+              "z": 4
+            },
+            "orientation": {
+              "w": "y",
+              "l": "x",
+              "h": "z"
+            }
+          },
+          {
+            "id": 16,
+            "position": {
+              "x": 1,
+              "y": 6,
+              "z": 1
+            },
+            "orientation": {
+              "w": "x",
+              "l": "y",
+              "h": "z"
+            }
+          },
+          {
+            "id": 2,
+            "position": {
+              "x": 4,
+              "y": 3,
+              "z": 1
+            },
+            "orientation": {
+              "w": "y",
+              "l": "z",
+              "h": "x"
+            }
+          },
+          {
+            "id": 6,
             "position": {
               "x": 0,
-              "y": 3,
+              "y": 13,
               "z": 0
             },
             "orientation": {
@@ -395,14 +312,97 @@
           {
             "id": 25,
             "position": {
-              "x": 3,
-              "y": 3,
+              "x": 9,
+              "y": 32,
               "z": 3
             },
             "orientation": {
               "w": "x",
+              "l": "y",
+              "h": "z"
+            }
+          },
+          {
+            "id": 0,
+            "position": {
+              "x": 3,
+              "y": 20,
+              "z": 1
+            },
+            "orientation": {
+              "w": "y",
               "l": "z",
-              "h": "y"
+              "h": "x"
+            }
+          },
+          {
+            "id": 26,
+            "position": {
+              "x": 7,
+              "y": 1,
+              "z": 0
+            },
+            "orientation": {
+              "w": "z",
+              "l": "y",
+              "h": "x"
+            }
+          }
+        ]
+      },
+      {
+        "truck": "truckNishinoFlower",
+        "packages": [
+          {
+            "id": 21,
+            "position": {
+              "x": 2,
+              "y": 1,
+              "z": 0
+            },
+            "orientation": {
+              "w": "y",
+              "l": "z",
+              "h": "x"
+            }
+          },
+          {
+            "id": 23,
+            "position": {
+              "x": 0,
+              "y": 3,
+              "z": 0
+            },
+            "orientation": {
+              "w": "x",
+              "l": "y",
+              "h": "z"
+            }
+          },
+          {
+            "id": 5,
+            "position": {
+              "x": 2,
+              "y": 0,
+              "z": 1
+            },
+            "orientation": {
+              "w": "y",
+              "l": "x",
+              "h": "z"
+            }
+          },
+          {
+            "id": 17,
+            "position": {
+              "x": 0,
+              "y": 0,
+              "z": 2
+            },
+            "orientation": {
+              "w": "z",
+              "l": "y",
+              "h": "x"
             }
           }
         ]
@@ -411,140 +411,31 @@
   },
   "finalState": {
     "in_warehouse": [
-      22,
       16,
-      8,
-      17,
-      23,
-      11,
-      26,
-      0,
-      25,
-      2,
+      3,
+      20,
       9,
-      18,
+      12,
+      0,
+      27,
+      2,
+      17,
+      22,
+      26,
+      5,
       21,
-      14,
-      15
+      29,
+      14
     ],
     "in_trucks": [
       {
         "truck": "truckManhattanCafe",
         "packages": [
           {
-            "id": 10,
-            "position": {
-              "x": 0,
-              "y": 9,
-              "z": 0
-            },
-            "orientation": {
-              "w": "x",
-              "l": "z",
-              "h": "y"
-            }
-          },
-          {
-            "id": 12,
-            "position": {
-              "x": 0,
-              "y": 12,
-              "z": 1
-            },
-            "orientation": {
-              "w": "x",
-              "l": "z",
-              "h": "y"
-            }
-          },
-          {
-            "id": 6,
-            "position": {
-              "x": 1,
-              "y": 3,
-              "z": 0
-            },
-            "orientation": {
-              "w": "y",
-              "l": "z",
-              "h": "x"
-            }
-          },
-          {
-            "id": 27,
-            "position": {
-              "x": 5,
-              "y": 7,
-              "z": 1
-            },
-            "orientation": {
-              "w": "x",
-              "l": "z",
-              "h": "y"
-            }
-          },
-          {
             "id": 28,
             "position": {
-              "x": 0,
-              "y": 19,
-              "z": 0
-            },
-            "orientation": {
-              "w": "y",
-              "l": "z",
-              "h": "x"
-            }
-          },
-          {
-            "id": 5,
-            "position": {
-              "x": 1,
-              "y": 14,
-              "z": 1
-            },
-            "orientation": {
-              "w": "y",
-              "l": "x",
-              "h": "z"
-            }
-          }
-        ]
-      },
-      {
-        "truck": "truckHishiAkebono",
-        "packages": [
-          {
-            "id": 29,
-            "position": {
-              "x": 0,
-              "y": 3,
-              "z": 0
-            },
-            "orientation": {
-              "w": "x",
-              "l": "z",
-              "h": "y"
-            }
-          },
-          {
-            "id": 3,
-            "position": {
-              "x": 4,
-              "y": 26,
-              "z": 0
-            },
-            "orientation": {
-              "w": "x",
-              "l": "z",
-              "h": "y"
-            }
-          },
-          {
-            "id": 1,
-            "position": {
-              "x": 1,
-              "y": 30,
+              "x": 3,
+              "y": 6,
               "z": 0
             },
             "orientation": {
@@ -556,21 +447,8 @@
           {
             "id": 13,
             "position": {
-              "x": 7,
-              "y": 13,
-              "z": 3
-            },
-            "orientation": {
-              "w": "y",
-              "l": "z",
-              "h": "x"
-            }
-          },
-          {
-            "id": 24,
-            "position": {
-              "x": 2,
-              "y": 19,
+              "x": 4,
+              "y": 8,
               "z": 0
             },
             "orientation": {
@@ -578,31 +456,44 @@
               "l": "x",
               "h": "z"
             }
+          },
+          {
+            "id": 24,
+            "position": {
+              "x": 0,
+              "y": 17,
+              "z": 0
+            },
+            "orientation": {
+              "w": "x",
+              "l": "y",
+              "h": "z"
+            }
           }
         ]
       },
       {
-        "truck": "truckNishinoFlower",
+        "truck": "truckHishiAkebono",
         "packages": [
           {
-            "id": 20,
+            "id": 11,
             "position": {
-              "x": 0,
-              "y": 1,
-              "z": 6
+              "x": 2,
+              "y": 36,
+              "z": 0
             },
             "orientation": {
-              "w": "z",
-              "l": "x",
-              "h": "y"
+              "w": "x",
+              "l": "y",
+              "h": "z"
             }
           },
           {
             "id": 4,
             "position": {
-              "x": 0,
-              "y": 0,
-              "z": 5
+              "x": 6,
+              "y": 9,
+              "z": 3
             },
             "orientation": {
               "w": "x",
@@ -611,10 +502,75 @@
             }
           },
           {
+            "id": 1,
+            "position": {
+              "x": 6,
+              "y": 2,
+              "z": 0
+            },
+            "orientation": {
+              "w": "x",
+              "l": "y",
+              "h": "z"
+            }
+          },
+          {
+            "id": 8,
+            "position": {
+              "x": 9,
+              "y": 37,
+              "z": 0
+            },
+            "orientation": {
+              "w": "x",
+              "l": "z",
+              "h": "y"
+            }
+          },
+          {
+            "id": 19,
+            "position": {
+              "x": 7,
+              "y": 9,
+              "z": 0
+            },
+            "orientation": {
+              "w": "z",
+              "l": "x",
+              "h": "y"
+            }
+          },
+          {
+            "id": 15,
+            "position": {
+              "x": 6,
+              "y": 18,
+              "z": 5
+            },
+            "orientation": {
+              "w": "z",
+              "l": "x",
+              "h": "y"
+            }
+          },
+          {
             "id": 7,
             "position": {
-              "x": 3,
-              "y": 1,
+              "x": 9,
+              "y": 2,
+              "z": 4
+            },
+            "orientation": {
+              "w": "z",
+              "l": "x",
+              "h": "y"
+            }
+          },
+          {
+            "id": 6,
+            "position": {
+              "x": 0,
+              "y": 13,
               "z": 0
             },
             "orientation": {
@@ -624,15 +580,59 @@
             }
           },
           {
-            "id": 19,
+            "id": 25,
             "position": {
-              "x": 0,
-              "y": 2,
-              "z": 4
+              "x": 9,
+              "y": 32,
+              "z": 3
             },
             "orientation": {
-              "w": "y",
-              "l": "x",
+              "w": "x",
+              "l": "y",
+              "h": "z"
+            }
+          },
+          {
+            "id": 10,
+            "position": {
+              "x": 5,
+              "y": 30,
+              "z": 0
+            },
+            "orientation": {
+              "w": "z",
+              "l": "y",
+              "h": "x"
+            }
+          }
+        ]
+      },
+      {
+        "truck": "truckNishinoFlower",
+        "packages": [
+          {
+            "id": 23,
+            "position": {
+              "x": 0,
+              "y": 3,
+              "z": 0
+            },
+            "orientation": {
+              "w": "x",
+              "l": "y",
+              "h": "z"
+            }
+          },
+          {
+            "id": 18,
+            "position": {
+              "x": 1,
+              "y": 2,
+              "z": 0
+            },
+            "orientation": {
+              "w": "x",
+              "l": "y",
               "h": "z"
             }
           }
@@ -640,12 +640,32 @@
       }
     ]
   },
-  "finalCost": 12763,
-  "finalVal": 797,
+  "finalCost": 42607,
+  "finalVal": 933,
   "costHistory": [
-    698375
+    688375,
+    608606,
+    539045,
+    479045,
+    439258,
+    399258,
+    329699,
+    299820,
+    270047,
+    240047,
+    220331,
+    190644,
+    170851,
+    151159,
+    121322,
+    101753,
+    91753,
+    81753,
+    72096,
+    52371,
+    42607
   ],
-  "seed": 333986,
-  "duration": 0.390204600058496,
-  "iterations": 23
+  "seed": 267960,
+  "duration": 0.5519253999227658,
+  "iterations": 21
 }
