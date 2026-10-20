@@ -250,7 +250,7 @@ def runSAExperiment(name, label, algo, run):
     info_path = os.path.join(folder, f"{name}_info.txt")
     with open(info_path, "w", encoding="utf-8") as f:
         f.write(f"(seed={seed}) ===\n")
-        f.write(f"Frekuensi stuck di local optimum (asumsinya itu berapa kali dia reject worser moves) = {res['rejectedWorseMoves']}\n")
+        f.write(f"Frekuensi stuck (jumlah move lebih buruk ditolak) = {res['rejectedWorseMoves']}\n")
         f.write(f"value akhir = {res['finalVal']} | cost = {res['finalCost']} | durasi = {res['duration']:.1f}s\n\n")
         f.write("### INITIAL STATE ###\n")
         f.write(info_init + "\n\n")
@@ -260,7 +260,7 @@ def runSAExperiment(name, label, algo, run):
     print(f"    value di truk = {res['finalVal']}"
             f" | cost = {res['finalCost']}"
             f" | durasi = {res['duration']:.1f}s"
-            f" | frekuensi stuck di local optimum (asumsinya itu berapa kali dia reject worser moves) = {res['rejectedWorseMoves']}")
+            f" | frekuensi stuck (jumlah move lebih buruk ditolak) = {res['rejectedWorseMoves']}")
     print(f"    info disimpan di: {info_path}")
 
     return res

@@ -204,21 +204,21 @@ def plotHC(results, save_path=None, show=True, title="Algorithm"):
     fig = plt.figure(figsize=(12, 8))
     gs = fig.add_gridspec(2, 1, height_ratios=[3, 1])
     
-    ax_obj = fig.add_subplot(gs[0, 0])
+    ax_cost = fig.add_subplot(gs[0, 0])
     ax_tab = fig.add_subplot(gs[1, 0])
 
     # plot cost vs iterasi
     for i, r in enumerate(results):
         history = r.get("costHistory", [])
-        ax_obj.plot(
+        ax_cost.plot(
             range(len(history)),
             history,
             linewidth=1.5,
         )
 
-    ax_obj.set_xlabel("Iterasi")
-    ax_obj.set_ylabel("Cost")
-    ax_obj.grid(alpha=0.3)
+    ax_cost.set_xlabel("Iterasi")
+    ax_cost.set_ylabel("Cost")
+    ax_cost.grid(alpha=0.3)
 
     # tabel ringkasan
     ax_tab.axis("off")
@@ -268,67 +268,61 @@ def plotHC(results, save_path=None, show=True, title="Algorithm"):
 
 #list result dict dari sim anneal -> panel cost vs iterasi, e^(dE/T) vs iterasi, frekuensi stuck, tabel ringkasan
 def plotSA(results, save_path=None, show=True, title="Algorithm"):
-    fig, axes = plt.subplots(2, 2, figsize=(14, 9))
-    ax_obj, ax_prob, ax_stuck, ax_tab = axes.flatten()
+    fig, axes = plt.subplots(2, 2, figsize=(14, 8), gridspec_kw={"height_ratios": [3, 1]})
+    ax_cost, ax_prob = axes[0]
+    fig.delaxes(axes[1, 0])
+    fig.delaxes(axes[1, 1])
+    ax_tab = fig.add_subplot(2, 1, 2)
 
     for i, r in enumerate(results):
-        ax_obj.plot(
-            r["costHistory"],
-            linewidth=1,
-        )
+        cost_history = r.get("costHistory", [])
+        if cost_history:
+            ax_cost.plot(range(len(cost_history)), cost_history, linewidth=1.2, label=f"Run {i + 1}")
 
-        probs = r.get("probabilityHistory", [])
-        if probs:
-            xs = [p[0] for p in probs]
-            ys = [p[1] for p in probs]
-            ax_prob.scatter(xs, ys, s=4, alpha=0.35)
+        prob_history = r.get("probabilityHistory", [])
+        if prob_history:
+            xs = [p[0] for p in prob_history]
+            ys = [p[1] for p in prob_history]
+            ax_prob.plot(xs, ys, linewidth=1, alpha=0.7, label=f"Run {i + 1}")
 
-    ax_obj.set_title("Objective terhadap iterasi")
-    ax_obj.set_xlabel("iterasi")
-    ax_obj.set_ylabel("value")
-    ax_obj.grid(alpha=0.3)
+    ax_cost.set_title("Cost terhadap iterasi")
+    ax_cost.set_xlabel("Iterasi")
+    ax_cost.set_ylabel("Cost")
+    ax_cost.grid(alpha=0.3)
 
-    ax_prob.set_title("Probabilitas menerima move yang lebih buruk")
-    ax_prob.set_xlabel("iterasi")
+    if results: ax_cost.legend()
+
+    ax_prob.set_title("e^(ΔE/T) terhadap iterasi")
+    ax_prob.set_xlabel("Iterasi")
     ax_prob.set_ylabel("e^(ΔE/T)")
     ax_prob.set_ylim(-0.02, 1.02)
     ax_prob.grid(alpha=0.3)
-
-    labels = [f"Run {i + 1}" for i in range(len(results))]
-    stuck = [r.get("stuckCtr", 0) for r in results]
-    bars = ax_stuck.bar(labels, stuck)
-    ax_stuck.bar_label(bars)
-    ax_stuck.set_title("Frekuensi move lebih buruk yang ditolak")
-    ax_stuck.set_ylabel("jumlah")
-    ax_stuck.grid(axis="y", alpha=0.3)
 
     ax_tab.axis("off")
     rows = []
     for i, r in enumerate(results):
         rows.append([
-            f"Run {i + 1}",
-            r.get("seed", "-"),
-            r.get("iterations", len(r["costHistory"]) - 1),
-            r["finalVal"],
-            f"{r['duration']:.1f}",
-            r.get("stuckCtr", "-"),
-            r.get("failedCtr", "-")
+            r.get("finalVal", "-"),
+            r.get("finalCost", "-"),
+            f"{r.get('duration', 0):.1f}",
+            r.get("iterations", len(r.get("costHistory", [])) - 1),
+            r.get("rejectedWorseMoves", "-"),
         ])
 
     table = ax_tab.table(
         cellText=rows,
-        colLabels=["Run", "Seed", "Iterasi", "Value akhir", "Durasi (s)", "Stuck", "Move gagal"],
+        colLabels=["Value", "Cost", "Durasi (s)", "Iterasi", "Stuck (Frekuensi move lebih buruk ditolak)"],
         loc="center",
         cellLoc="center"
     )
     table.auto_set_font_size(False)
     table.set_fontsize(9)
-    table.auto_set_column_width(list(range(7)))
+    table.auto_set_column_width(list(range(5)))
     table.scale(1, 1.8)
-    ax_tab.set_title("Ringkasan eksperimen")
+    ax_tab.axis("off")
 
     fig.suptitle(title, fontsize=13, fontweight="bold")
-    fig.tight_layout(rect=(0, 0, 1, 0.96))
+    fig.subplots_adjust(top=0.9, bottom=0.08, hspace=0.35, wspace=0.25)
     finish(fig, save_path, show)
 
 def plotGA(results, save_path=None, show=True, title="Algorithm"):
