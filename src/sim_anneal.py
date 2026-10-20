@@ -18,7 +18,7 @@ def simulatedAnnealing():
         nextState = generateNeighborState(curState, "SA")
         deltaE = calculateCost(nextState) - calculateCost(curState)
 
-        if deltaE < 0:
+        if deltaE <= 0:
             curState = nextState
         else:
             probability = math.exp(-deltaE / T)

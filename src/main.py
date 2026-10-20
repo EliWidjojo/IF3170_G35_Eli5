@@ -19,26 +19,39 @@ ALGOS = { #file name, display name, func, ma func plot hasil
 }
 
 #simpan/baca hasil
-def resPath(name):
-    return os.path.join(OUTPUT_DIR, f"{name}.json")
+def get_run_dir(name, run):
+    path = os.path.join(OUTPUT_DIR, f"{name}_run{run}")
+    os.makedirs(path, exist_ok=True)
+    return path
 
-def clearRes(name):
-    for path in glob.glob(os.path.join(OUTPUT_DIR, f"{name}_run*.json")):
-        os.remove(path)
+def get_next_run(name):
+    if not os.path.exists(OUTPUT_DIR):
+        return 1
+    runs = [0]
+    for f in os.listdir(OUTPUT_DIR):
+        if f.startswith(f"{name}_run"):
+            try:
+                num = int(f.split("_run")[1])
+                runs.append(num)
+            except:
+                pass
+    return max(runs) + 1
 
-def saveRes(name, res):
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    with open(resPath(name), "w") as f:
+def saveRes(name, run, res):
+    folder = get_run_dir(name, run)
+    path = os.path.join(folder, f"{name}.json")
+    with open(path, "w") as f:
         json.dump(res, f, indent=2)
 
-def loadRes(name):
-    with open(resPath(name), "r") as f:
-        return json.load(f)
+def loadRes(name, run):
+    path = os.path.join(OUTPUT_DIR, f"{name}_run{run}", f"{name}.json")
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            return json.load(f)
+    return None
 
 #jalankan dan tampilkan
-def runHCSteepestExperiment(name, label, algo):
-    clearRes(name)
-
+def runHCSteepestExperiment(name, label, algo, run):
     seed = random.randrange(1, 1000000)
     random.seed(seed)
 
@@ -55,12 +68,12 @@ def runHCSteepestExperiment(name, label, algo):
         "duration": duration,
         "iterations": iters
     }
-    saveRes(name, res)
+    saveRes(name, run, res)
 
     info_init = display.infoState(initState)
     info_final = display.infoState(finalState)
-    info_path = os.path.join(OUTPUT_DIR, f"{name}_info.txt")
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    folder = get_run_dir(name, run)
+    info_path = os.path.join(folder, f"{name}_info.txt")
     with open(info_path, "w", encoding="utf-8") as f:
         f.write(f"(seed={seed}) ===\n")
         f.write(f"Jumlah iterasi = {res['iterations']}\n")
@@ -78,14 +91,12 @@ def runHCSteepestExperiment(name, label, algo):
 
     return res
 
-def runHCSidewaysExperiment(name, label, algo):
-    clearRes(name)
-
+def runHCSidewaysExperiment(name, label, algo, run, max_sm=10):
     seed = random.randrange(1, 1000000)
     random.seed(seed)
 
     start_time = time.perf_counter()
-    finalState, finalCost, costHistory, initState, iters, sideWaysMoves = algo()
+    finalState, finalCost, costHistory, initState, iters, sideWaysMoves = algo(maxSideWaysMoves=max_sm)
     duration = time.perf_counter() - start_time
     res = {
         "initState": initState,
@@ -97,14 +108,14 @@ def runHCSidewaysExperiment(name, label, algo):
         "duration": duration,
         "iterations": iters,
         "sideWaysMoves": sideWaysMoves,
-        "maxSideWaysMoves": 10
+        "maxSideWaysMoves": max_sm
     }
-    saveRes(name, res)
+    saveRes(name, run, res)
 
     info_init = display.infoState(initState)
     info_final = display.infoState(finalState)
-    info_path = os.path.join(OUTPUT_DIR, f"{name}_info.txt")
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    folder = get_run_dir(name, run)
+    info_path = os.path.join(folder, f"{name}_info.txt")
     with open(info_path, "w", encoding="utf-8") as f:
         f.write(f"(seed={seed}) ===\n")
         f.write(f"Jumlah iterasi = {res['iterations']}\n")
@@ -125,9 +136,7 @@ def runHCSidewaysExperiment(name, label, algo):
 
     return res
 
-def runHCStochasticExperiment(name, label, algo):
-    clearRes(name)
-    
+def runHCStochasticExperiment(name, label, algo, run):    
     seed = random.randrange(1, 1000000)
     random.seed(seed)
 
@@ -144,12 +153,12 @@ def runHCStochasticExperiment(name, label, algo):
         "duration": duration,
         "iterations": iters
     }
-    saveRes(name, res)
+    saveRes(name, run, res)
 
     info_init = display.infoState(initState)
     info_final = display.infoState(finalState)
-    info_path = os.path.join(OUTPUT_DIR, f"{name}_info.txt")
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    folder = get_run_dir(name, run)
+    info_path = os.path.join(folder, f"{name}_info.txt")
     with open(info_path, "w", encoding="utf-8") as f:
         f.write(f"(seed={seed}) ===\n")
         f.write(f"Jumlah iterasi = {res['iterations']}\n")
@@ -167,14 +176,12 @@ def runHCStochasticExperiment(name, label, algo):
 
     return res
 
-def runHCRandomRestartExperiment(name, label, algo):
-    clearRes(name)
-    
+def runHCRandomRestartExperiment(name, label, algo, run, max_rr=10):
     seed = random.randrange(1, 1000000)
     random.seed(seed)
 
     start_time = time.perf_counter()
-    finalState, finalCost, costHistory, initState, itersPerRestart, restarts = algo()
+    finalState, finalCost, costHistory, initState, itersPerRestart, restarts, totalIters = algo(maxRestarts=max_rr)
     duration = time.perf_counter() - start_time
     res = {
         "initState": initState,
@@ -184,19 +191,22 @@ def runHCRandomRestartExperiment(name, label, algo):
         "costHistory": costHistory,
         "seed": seed,
         "duration": duration,
+        "iterations": totalIters,
         "iterationsPerRestart": itersPerRestart,
-        "restarts": restarts
+        "restarts": restarts,
+        "maxRestarts": max_rr
     }
-    saveRes(name, res)
+    saveRes(name, run, res)
 
     info_init = display.infoState(initState)
     info_final = display.infoState(finalState)
-    info_path = os.path.join(OUTPUT_DIR, f"{name}_info.txt")
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    folder = get_run_dir(name, run)
+    info_path = os.path.join(folder, f"{name}_info.txt")
     with open(info_path, "w", encoding="utf-8") as f:
         f.write(f"(seed={seed}) ===\n")
         f.write(f"Iterasi per restart = {res['iterationsPerRestart']}\n")
         f.write(f"Jumlah restart = {res['restarts']}\n")
+        f.write(f"Total iterasi = {res['iterations']}\n")
         f.write(f"value akhir = {res['finalVal']} | cost = {res['finalCost']} | durasi = {res['duration']:.1f}s\n\n")
         f.write("### INITIAL STATE ###\n")
         f.write(info_init + "\n\n")
@@ -207,14 +217,13 @@ def runHCRandomRestartExperiment(name, label, algo):
             f" | cost = {res['finalCost']}"
             f" | durasi = {res['duration']:.1f}s"
             f" | iterasi per restart = {res['iterationsPerRestart']}"
-            f" | restart = {res['restarts']}")
+            f" | total iterasi = {res['iterations']}"
+            f" | jumlah restart = {res['restarts']}")
     print(f"    info disimpan di: {info_path}")
 
     return res
 
-def runSAExperiment(name, label, algo):
-    clearRes(name)
-
+def runSAExperiment(name, label, algo, run):
     seed = random.randrange(1, 1000000)
     random.seed(seed)
  
@@ -233,15 +242,15 @@ def runSAExperiment(name, label, algo):
         "rejectedWorseMoves": rejectedWorseMoves,
         "iterations": iters
     }
-    saveRes(name, res)
+    saveRes(name, run, res)
 
     info_init = display.infoState(initState)
     info_final = display.infoState(finalState)
-    info_path = os.path.join(OUTPUT_DIR, f"{name}_info.txt")
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    folder = get_run_dir(name, run)
+    info_path = os.path.join(folder, f"{name}_info.txt")
     with open(info_path, "w", encoding="utf-8") as f:
         f.write(f"(seed={seed}) ===\n")
-        f.write(f"Frekuensi stuck di local optimum (asumsinya itu berapa kali dia reject worser moves) = {res['rejectedWorseMoves']}\n")
+        f.write(f"Frekuensi stuck (jumlah move lebih buruk ditolak) = {res['rejectedWorseMoves']}\n")
         f.write(f"value akhir = {res['finalVal']} | cost = {res['finalCost']} | durasi = {res['duration']:.1f}s\n\n")
         f.write("### INITIAL STATE ###\n")
         f.write(info_init + "\n\n")
@@ -251,15 +260,13 @@ def runSAExperiment(name, label, algo):
     print(f"    value di truk = {res['finalVal']}"
             f" | cost = {res['finalCost']}"
             f" | durasi = {res['duration']:.1f}s"
-            f" | frekuensi stuck di local optimum (asumsinya itu berapa kali dia reject worser moves) = {res['rejectedWorseMoves']}")
+            f" | frekuensi stuck (jumlah move lebih buruk ditolak) = {res['rejectedWorseMoves']}")
     print(f"    info disimpan di: {info_path}")
 
     return res
 
 
-def runGAExperiment(name, label, algo, populationSize, generations):
-    clearRes(name)
-
+def runGAExperiment(name, label, algo, run, populationSize, generations):
     seed = random.randrange(1, 1000000)
     random.seed(seed)
 
@@ -293,17 +300,13 @@ def runGAExperiment(name, label, algo, populationSize, generations):
         "duration": duration
     }
 
-    saveRes(name, res)
+    saveRes(name, run, res)
 
     info_init = display.infoState(initState)
     info_final = display.infoState(finalState)
 
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-    info_path = os.path.join(
-        OUTPUT_DIR,
-        f"{name}_info.txt"
-    )
+    folder = get_run_dir(name, run)
+    info_path = os.path.join(folder, f"{name}_info.txt")
 
     with open(info_path, "w", encoding="utf-8") as f:
         f.write(f"(seed={seed}) ===\n")
@@ -327,28 +330,22 @@ def runGAExperiment(name, label, algo, populationSize, generations):
 
     return res
 
-def showResults(name, label, result, plotFunc):
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-
+def showResults(name, label, result, run, plotFunc):
+    folder = get_run_dir(name, run)
+    
     display.showState(
-        result["initState"],
-        f"{label} - initial state",
-        save_path=os.path.join(OUTPUT_DIR, f"{name}_initial.png"),
-        show=SHOW_WINDOWS
+        result["initState"], f"{label} - Run {run} - Initial", 
+        save_path=os.path.join(folder, "initial.png"), show=SHOW_WINDOWS
     )
-
     display.showState(
-        result["finalState"],
-        f"{label} - final state",
-        save_path=os.path.join(OUTPUT_DIR, f"{name}_final.png"),
-        show=SHOW_WINDOWS
+        result["finalState"], f"{label} - Run {run} - Final", 
+        save_path=os.path.join(folder, "final.png"), show=SHOW_WINDOWS
     )
 
     plotFunc(
         [result],
-        save_path=os.path.join(OUTPUT_DIR, f"{name}_plot.png"),
-        show=SHOW_WINDOWS,
-        title=label
+        save_path=os.path.join(folder, "plot.png"),
+        show=SHOW_WINDOWS, title=f"{label} - Run {run}"
     )
 
 def main():
@@ -370,37 +367,64 @@ def main():
 
         mode = input("(r)un baru atau (l)oad hasil dari output? [r/l]: ").strip().lower()
         if mode == "l":
-            results = loadRes(name)
-            if not results:
-                print(f"Belum ada hasil tersimpan untuk {label}. Jalankan dulu dengan 'r'.")
-                continue
-        else:
-            if choice == "1":
-                results = runHCSteepestExperiment(name, label, algo)
-            elif choice == "2":
-                results = runHCSidewaysExperiment(name, label, algo)
-            elif choice == "3":
-                results = runHCStochasticExperiment(name, label, algo)
-            elif choice == "4":
-                results = runHCRandomRestartExperiment(name, label, algo)
-            elif choice == "5":
-                results = runSAExperiment(name, label, algo)
-            elif choice == "6":
-                try:
-                    populationSize = int(input("Ukuran populasi [default: 100]: ").strip())
-                    generations = int(input("Jumlah generasi [default: 100]: ").strip())
-
-                    if populationSize < 5 or generations < 1:
-                        print("Populasi minimal 5 dan generasi minimal 1")
-                        continue
-
-                except ValueError:
-                    print("Masukkan angka bulat yang valid.")
+            try:
+                run_num = int(input("Mau load Run ke berapa? "))
+                result = loadRes(name, run_num)
+                if not result:
+                    print(f"Hasil Run {run_num} untuk {label} tidak ditemukan.")
                     continue
+                showResults(name, label, result, run_num, plotFunc)
+            except ValueError:
+                print("Masukkan angka run yang valid.")
+            continue
 
-                results = runGAExperiment(name, label, algo, populationSize=populationSize, generations=generations)
-                 
-        showResults(name, label, results, plotFunc)
+        run_num = get_next_run(name)
+        
+        params = {}
+        if choice == "2":
+            while True:
+                try:
+                    val = input("Max Sideways Moves [default: 10]: ").strip()
+                    params["max_sm"] = int(val) if val else 10
+                    if params["max_sm"] <= 0:
+                        print("Angka harus lebih dari 0")
+                        continue
+                    break
+                except ValueError:
+                    print("Input tidak valid! Masukkan angka.")
+        elif choice == "4":
+            while True:
+                try:
+                    val = input("Max Restarts [default: 10]: ").strip()
+                    params["max_rr"] = int(val) if val else 10
+                    if params["max_rr"] <= 0:
+                        print("Angka harus lebih dari 0")
+                        continue
+                    break
+                except ValueError:
+                    print("Input tidak valid! Masukkan angka.")
+        elif choice == "6":
+            while True:
+                try:
+                    p = input("Ukuran populasi [default: 100]: ").strip()
+                    g = input("Jumlah generasi [default: 100]: ").strip()
+                    params["populationSize"] = int(p) if p else 100
+                    params["generations"] = int(g) if g else 100
+                    if params["populationSize"] < 5 or params["generations"] < 1:
+                        print("Populasi minimal 5 dan generasi minimal 1. Coba lagi.")
+                        continue
+                    break
+                except ValueError:
+                    print("Input tidak valid! Masukkan angka.")
+
+        if choice == "1": result = runHCSteepestExperiment(name, label, algo, run_num)
+        elif choice == "2": result = runHCSidewaysExperiment(name, label, algo, run_num, **params)
+        elif choice == "3": result = runHCStochasticExperiment(name, label, algo, run_num)
+        elif choice == "4": result = runHCRandomRestartExperiment(name, label, algo, run_num, **params)
+        elif choice == "5": result = runSAExperiment(name, label, algo, run_num)
+        elif choice == "6": result = runGAExperiment(name, label, algo, run_num, **params)
+             
+        showResults(name, label, result, run_num, plotFunc)
  
 if __name__ == "__main__":
     main()

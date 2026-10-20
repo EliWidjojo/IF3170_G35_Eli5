@@ -1,0 +1,100 @@
+(seed=875216) ===
+Iterasi per restart = [20, 23, 24, 21, 25, 20, 25]
+Jumlah restart = 7
+Total iterasi = 158
+value akhir = 831 | cost = 12449 | durasi = 9.5s
+
+### INITIAL STATE ###
+TOTAL VALUE di truk : 1625
+
+[truckManhattanCafe] value=440  berat=76/500
+   constraint: MELANGGAR -> clipping, melayang, fragile di bawah
+[truckHishiAkebono] value=985  berat=246/500
+   constraint: MELANGGAR -> clipping, melayang, fragile di bawah
+[truckNishinoFlower] value=200  berat=42/500
+   constraint: MELANGGAR -> clipping, melayang
+
+DI DALAM PETI KEMAS (id: x,y,z | w x l x h [orientasi])
+  --- truckManhattanCafe (7 paket) ---
+    6: 4,5,0 | 2x9x5 [xzy] v=95 *fragile  <-- clipping dgn 24, clipping dgn 11, clipping dgn 12, clipping dgn 10
+    24: 0,0,0 | 5x9x1 [yzx] v=97  <-- clipping dgn 6, clipping dgn 23, clipping dgn 11
+    23: 3,1,0 | 6x2x5 [xzy] v=28 *fragile  <-- clipping dgn 24
+    11: 1,8,0 | 9x10x4 [xzy] v=90 *fragile  <-- clipping dgn 6, clipping dgn 24
+    12: 0,4,2 | 10x3x2 [xyz] v=21  <-- clipping dgn 6, melayang
+    10: 0,11,4 | 10x9x1 [yzx] v=48  <-- clipping dgn 6, clipping dgn 28, di atas fragile 11
+    28: 3,16,4 | 5x4x1 [zxy] v=61  <-- clipping dgn 10, di atas fragile 11
+  --- truckHishiAkebono (19 paket) ---
+    27: 8,18,1 | 4x4x4 [zyx] v=24  <-- clipping dgn 29, melayang
+    15: 0,17,0 | 5x4x8 [yxz] v=25  <-- clipping dgn 3, clipping dgn 4, clipping dgn 0, clipping dgn 29
+    1: 9,30,6 | 2x3x4 [yxz] v=68  <-- clipping dgn 13, clipping dgn 26, clipping dgn 8, melayang
+    19: 1,33,8 | 8x3x1 [yxz] v=50  <-- clipping dgn 22, clipping dgn 26, di atas fragile 13
+    20: 10,25,1 | 5x2x8 [yzx] v=33 *fragile  <-- melayang
+    22: 1,35,0 | 8x2x10 [xyz] v=28 *fragile  <-- clipping dgn 19, clipping dgn 13, clipping dgn 26
+    2: 4,6,3 | 5x10x6 [xzy] v=33 *fragile  <-- clipping dgn 3, clipping dgn 14, clipping dgn 9, clipping dgn 5, clipping dgn 29, melayang
+    13: 7,30,4 | 6x9x4 [yxz] v=60 *fragile  <-- clipping dgn 1, clipping dgn 22, clipping dgn 26, clipping dgn 25, clipping dgn 8, melayang
+    3: 1,8,0 | 10x10x9 [xyz] v=39  <-- clipping dgn 15, clipping dgn 2, clipping dgn 14, clipping dgn 9, clipping dgn 16, clipping dgn 0, clipping dgn 5, clipping dgn 29
+    14: 2,3,0 | 10x9x4 [xyz] v=76 *fragile  <-- clipping dgn 2, clipping dgn 3, clipping dgn 9, clipping dgn 16, clipping dgn 0, clipping dgn 5, clipping dgn 29
+    26: 5,29,0 | 8x9x10 [zyx] v=43  <-- clipping dgn 1, clipping dgn 19, clipping dgn 22, clipping dgn 13, clipping dgn 25, clipping dgn 8
+    9: 3,7,0 | 9x10x10 [yxz] v=61 *fragile  <-- clipping dgn 2, clipping dgn 3, clipping dgn 14, clipping dgn 16, clipping dgn 0, clipping dgn 5, clipping dgn 29
+    4: 4,19,3 | 3x6x1 [xzy] v=71  <-- clipping dgn 15, melayang
+    25: 12,35,2 | 3x3x5 [zyx] v=69  <-- clipping dgn 13, clipping dgn 26, melayang
+    8: 9,29,0 | 3x6x10 [yzx] v=81  <-- clipping dgn 1, clipping dgn 13, clipping dgn 26
+    16: 10,3,1 | 4x10x9 [xyz] v=91 *fragile  <-- clipping dgn 3, clipping dgn 14, clipping dgn 9, clipping dgn 29, melayang
+    0: 1,8,0 | 3x10x10 [yxz] v=67  <-- clipping dgn 15, clipping dgn 3, clipping dgn 14, clipping dgn 9, clipping dgn 5
+    5: 0,8,2 | 5x3x4 [xzy] v=31  <-- clipping dgn 2, clipping dgn 3, clipping dgn 14, clipping dgn 9, clipping dgn 0, melayang
+    29: 4,11,2 | 10x8x8 [zxy] v=35  <-- clipping dgn 27, clipping dgn 15, clipping dgn 2, clipping dgn 3, clipping dgn 14, clipping dgn 9, clipping dgn 16, melayang
+  --- truckNishinoFlower (4 paket) ---
+    18: 1,6,1 | 4x1x1 [xyz] v=26  <-- clipping dgn 17, clipping dgn 21, melayang
+    7: 4,3,4 | 4x3x4 [zyx] v=64  <-- clipping dgn 21, melayang
+    17: 1,2,0 | 3x6x6 [zxy] v=67 *fragile  <-- clipping dgn 18, clipping dgn 21
+    21: 0,1,1 | 6x6x4 [zyx] v=43 *fragile  <-- clipping dgn 18, clipping dgn 7, clipping dgn 17, melayang
+
+DI LUAR / GUDANG (0 paket)
+(kosong)
+
+### FINAL STATE ###
+TOTAL VALUE di truk : 831
+
+[truckManhattanCafe] value=118  berat=24/500
+   constraint: OK
+[truckHishiAkebono] value=507  berat=144/500
+   constraint: MELANGGAR -> melayang
+[truckNishinoFlower] value=206  berat=32/500
+   constraint: OK
+
+DI DALAM PETI KEMAS (id: x,y,z | w x l x h [orientasi])
+  --- truckManhattanCafe (2 paket) ---
+    23: 3,1,0 | 6x2x5 [xzy] v=28 *fragile
+    11: 1,8,0 | 9x10x4 [xzy] v=90 *fragile
+  --- truckHishiAkebono (11 paket) ---
+    27: 8,18,1 | 4x4x4 [zyx] v=24  <-- melayang
+    15: 0,17,0 | 5x4x8 [yxz] v=25
+    20: 10,25,1 | 5x2x8 [yzx] v=33 *fragile
+    22: 1,35,0 | 8x2x10 [xyz] v=28 *fragile
+    14: 2,3,0 | 10x9x4 [xyz] v=76 *fragile
+    8: 9,29,0 | 3x6x10 [yzx] v=81
+    28: 10,24,0 | 4x5x1 [zyx] v=61
+    12: 3,32,0 | 2x3x10 [zyx] v=21
+    10: 3,27,1 | 10x1x9 [zyx] v=48
+    13: 9,16,5 | 6x9x4 [yxz] v=60 *fragile
+    19: 2,39,0 | 3x1x8 [xzy] v=50
+  --- truckNishinoFlower (3 paket) ---
+    17: 1,2,0 | 3x6x6 [zxy] v=67 *fragile
+    4: 5,2,0 | 3x6x1 [xzy] v=71
+    1: 4,6,1 | 3x2x4 [xyz] v=68
+
+DI LUAR / GUDANG (14 paket)
+3: 10x10x9 v=39 berat=20
+0: 10x3x10 v=67 berat=8
+29: 8x10x8 v=35 berat=12
+21: 4x6x6 v=43 berat=15 *fragile
+6: 2x5x9 v=95 berat=8 *fragile
+9: 10x9x10 v=61 berat=19 *fragile
+26: 10x9x8 v=43 berat=6
+5: 5x4x3 v=31 berat=20
+18: 4x1x1 v=26 berat=10
+24: 9x1x5 v=97 berat=7
+16: 4x10x9 v=91 berat=7 *fragile
+2: 5x6x10 v=33 berat=14 *fragile
+7: 4x3x4 v=64 berat=10
+25: 5x3x3 v=69 berat=8

@@ -112,6 +112,7 @@ def randomRestartHillClimbing(maxRestarts=10):
     allCostHistory = []
     itersPerRestart = []
     restarts = 0
+    totalIters = 0
 
     for i in range(maxRestarts):
         restarts += 1
@@ -124,4 +125,6 @@ def randomRestartHillClimbing(maxRestarts=10):
             bestCost = curCost
             bestInitState = initState
 
-    return bestState, bestCost, allCostHistory, bestInitState, itersPerRestart, restarts
+    totalIters = sum(itersPerRestart)
+
+    return bestState, bestCost, allCostHistory, bestInitState, itersPerRestart, restarts, totalIters
